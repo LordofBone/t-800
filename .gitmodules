@@ -1,3 +1,6 @@
 [submodule "Chatbot_8"]
 	path = Bot_Engine
 	url = https://github.com/LordofBone/Bot_Engine
+[submodule "soran"]
+	path = soran
+	url = https://github.com/LordofBone/soran.git
