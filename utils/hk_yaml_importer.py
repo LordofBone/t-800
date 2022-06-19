@@ -95,7 +95,7 @@ class YAMLData:
         self.secondary = {}
         self.tertiary = {}
         # Get mission parameters from yaml config file
-        with open(r'../mission_parameters.yaml') as file:
+        with open(r'../parameters/mission_parameters.yaml') as file:
             documents = yaml.full_load(file)
 
             # Extract sub-dicts
