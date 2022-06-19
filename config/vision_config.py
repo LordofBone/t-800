@@ -24,3 +24,6 @@ model_packed_name = "ssdlite_mobilenet_v2_coco_2018_05_09.tar.gz"
 model_packed_path = str(object_detect_models_dir / model_packed_name)
 model_name = "ssdlite_mobilenet_v2_coco_2018_05_09"
 model_path = str(object_detect_models_dir / model_name)
+
+vision_active = True
+store_detections = False
