@@ -60,7 +60,7 @@ class YAMLData:
 
     def __post_init__(self):
         # set up vision params from yaml config file
-        with open(r'../config/vision_config.yaml') as file:
+        with open(r'../config/vision_config.py') as file:
             documents = yaml.full_load(file)
 
             # Set up camera constants
