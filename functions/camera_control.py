@@ -1,18 +1,36 @@
-import os
-import subprocess
+from picamera import PiCamera
+from picamera.array import PiRGBArray
+
+from time import sleep
+
+from config.vision_config import *
 
 
-def take_pic():
-    process = subprocess.Popen(['bash', 'image_cap.sh'], stdout=open(os.devnull, 'wb'))
-    process.communicate()
+class CameraControl:
+    def __init__(self):
+        self.camera = PiCamera()
+        self.camera.resolution = (resolution_x, resolution_y)
+        self.camera.framerate = framerate
+
+        # Grab reference to the raw capture
+        self.rawCapture = PiRGBArray(CameraControlAccess.camera, size=(resolution_x, resolution_y))
+        self.rawCapture.truncate(0)
+
+    def take_pic(self, name):
+        self.camera.start_preview()
+        sleep(5)
+        self.camera.capture(f'{object_detect_images_dir}/{name}.jpg')
+        self.camera.stop_preview()
+
+    def take_pics(self, num, name):
+        for i in range(num):
+            self.camera.start_preview()
+            sleep(5)
+            self.camera.capture(f'{object_detect_images_dir}/{name}_{num}.jpg')
+            self.camera.stop_preview()
 
 
-def take_pics(num, name):
-    name_folder = ("./images/train/" + name)
-    for i in range(num):
-        process = subprocess.Popen(['bash', 'image_cap_norename.sh', name_folder], stdout=open(os.devnull, 'wb'))
-        process.communicate()
-
+CameraControlAccess = CameraControl()
 
 if __name__ == '__main__':
-    take_pic()
+    CameraControlAccess.take_pic('test')

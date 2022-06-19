@@ -16,8 +16,6 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 import tensorflow as tf
-from picamera import PiCamera
-from picamera.array import PiRGBArray
 from six.moves import range
 
 from config.vision_config import *
@@ -26,6 +24,7 @@ from functions.draw_vision import VisionAccess
 from events.event_queue import EventQueueAccess
 from utils.yaml_importer import YAMLAccess
 from functions.mission_parameteriser import mission_check
+from functions.camera_control import CameraControlAccess
 
 # Doing this inside the class seemed problematic, so moved outside the class:
 # This is needed since the working directory is the object_detection folder.
@@ -38,6 +37,7 @@ from utils import visualization_utils as vis_util
 import logging
 
 logger = logging.getLogger("object-detection")
+
 
 # todo: determine whether this needs to be a dataclass
 @dataclass
@@ -129,15 +129,9 @@ class ObjectDetector(object):
         self.frame_rate_calc = 1
         self.freq = self.cv2.getTickFrequency()
 
-        # Initialize Picamera and grab reference to the raw capture
-        self.camera = PiCamera()
-        self.camera.resolution = (self.IM_WIDTH, self.IM_HEIGHT)
-        self.camera.framerate = YAMLAccess.IM_FPS
-        self.rawCapture = PiRGBArray(self.camera, size=(self.IM_WIDTH, self.IM_HEIGHT))
-        self.rawCapture.truncate(0)
-
     def run_analysis_stream(self):
-        for self.frame1 in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=False):
+        for self.frame1 in CameraControlAccess.camera.capture_continuous(CameraControlAccess.rawCapture, format="bgr",
+                                                                         use_video_port=False):
             self.objects_frame = {}
 
             self.t1 = self.cv2.getTickCount()
@@ -185,8 +179,7 @@ class ObjectDetector(object):
                         # If store detections is enabled write a jpg of the cropped detection along with details in
                         # the filename
                         if self.store_detects:
-                            filename = 'Captured/{}_{}_.jpg'.format(str(ts), display_str_out)
-                            cv2.imwrite(filename, crop_img)
+                            cv2.imwrite(f'{object_detect_images_dir}/{ts}_{display_str_out}_.jpg', crop_img)
 
                         # Split the detection string to get the name of the detection
                         name_split = display_str_out.split(":")[0]
@@ -252,12 +245,12 @@ class ObjectDetector(object):
             self.frame_rate_calc = 1 / self.time1
 
             # Truncate the latest capture and delete the frame to save memory
-            self.rawCapture.truncate(0)
+            CameraControlAccess.rawCapture.truncate(0)
             del self.frame
 
     # Function for closing camera, clearing vision and clearing all cv2 windows
     def clear_analysis_stream(self):
-        self.camera.close()
+        CameraControlAccess.camera.close()
 
         VisionAccess.clear_vision()
 
