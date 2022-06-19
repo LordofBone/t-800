@@ -8,9 +8,9 @@ from dataclasses import dataclass, field
 import cv2
 import numpy as np
 
-from hk_event_processor import EventFactoryAccess
-from hk_serial_interfacing import SerialAccess
-from hk_yaml_importer import YAMLAccess
+from events.event_processor import EventFactoryAccess
+from hardware.serial_interfacing import SerialAccess
+from utils.yaml_importer import YAMLAccess
 
 
 # Function for getting items from a list/dictionary and catching index/key errors if there is no such item

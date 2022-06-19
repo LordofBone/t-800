@@ -4,20 +4,22 @@
 
 import subprocess
 
+import logging
+
+logger = logging.getLogger("pi-operations")
 
 def shutdown():
     # Switch off the Pi
-    ConsoleAccess.console_print_bool("Switching Off")
+    logger.debug("Switching Off")
     subprocess.call('sudo shutdown now', shell=True)
 
 
 def restart():
     # Restart the Pi
-    ConsoleAccess.console_print_bool("Restarting")
+    logger.debug("Restarting")
     subprocess.call('sudo reboot now', shell=True)
 
 
 if __name__ == "__main__":
     # Test the OS calls work with a reboot
-    ConsoleAccess.console_print_enable = True
     restart()

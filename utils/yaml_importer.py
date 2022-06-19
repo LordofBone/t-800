@@ -8,7 +8,9 @@ from dataclasses import dataclass, field
 
 import yaml
 
-from hk_console_logger import ConsoleAccess
+import logging
+
+logger = logging.getLogger("yaml-importer")
 
 
 # Search function for looking through dictionaries (mainly for searching through mission objectives for confirmations
@@ -118,9 +120,8 @@ YAMLAccess = YAMLData()
 
 if __name__ == "__main__":
     # Perform a test by parsing all yaml files and printing their data
-    ConsoleAccess.console_print_enable = True
     YAMLAccess.refresh_params()
-    ConsoleAccess.console_printer(YAMLAccess)
+    logger.debug(YAMLAccess)
 
     # Search and return test missions/objectives
     primary_found, objective_p = dict_search(YAMLAccess.primary.values(), "test_primary")
@@ -129,11 +130,11 @@ if __name__ == "__main__":
 
     # Print the test missions/objectives
     if primary_found:
-        ConsoleAccess.console_printer("PRIMARY SUCCESS")
-        ConsoleAccess.console_printer(objective_p)
+        logger.debug("PRIMARY SUCCESS")
+        logger.debug(objective_p)
     if secondary_found:
-        ConsoleAccess.console_printer("SECONDARY SUCCESS")
-        ConsoleAccess.console_printer(objective_s)
+        logger.debug("SECONDARY SUCCESS")
+        logger.debug(objective_s)
     if tertiary_found:
-        ConsoleAccess.console_printer("TERTIARY SUCCESS")
-        ConsoleAccess.console_printer(objective_t)
+        logger.debug("TERTIARY SUCCESS")
+        logger.debug(objective_t)

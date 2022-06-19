@@ -4,9 +4,8 @@
 
 import threading
 
-from hk_camera_obj_detect import ObjectDetector
-from hk_yaml_importer import YAMLAccess
-from hk_console_logger import ConsoleAccess
+from camera_obj_detect import ObjectDetector
+from utils.yaml_importer import YAMLAccess
 
 
 def start_machine_vision(show_vision=True, store_detections=False):
@@ -21,5 +20,4 @@ def start_machine_vision(show_vision=True, store_detections=False):
 
 if __name__ == "__main__":
     # Perform a test on ML systems
-    ConsoleAccess.console_print_enable = True
     start_machine_vision(True)

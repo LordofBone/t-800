@@ -1,5 +1,6 @@
-# !/user/bin/env python3
-from hk_console_logger import ConsoleAccess
+import logging
+
+logger = logging.getLogger("event-processor")
 
 
 # todo: determine whether this needs to be a dataclass
@@ -74,7 +75,7 @@ class EventFactory:
     # sub-queues for processing by individual modules
     def event_receiver(self, event_in):
         # Show a count of the amount of events to draw in the list if console print is enabled
-        ConsoleAccess.console_printer('events to draw: {}'.format(len(self.event_list_to_draw)))
+        logger.debug('events to draw: {}'.format(len(self.event_list_to_draw)))
 
         # Set a default description in case no event gets caught
         event_desc = "NO_EVENT"
@@ -84,7 +85,7 @@ class EventFactory:
 
         # todo: add in ability to detect and process text
         if event_type == "TEXT":
-            ConsoleAccess.console_printer("text found: " + event_content)
+            logger.debug("text found: " + event_content)
 
         # Handling for serial writes, puts serial write instructions into a list so the serial interface module can
         # pick them up, also writes to the screen
@@ -127,12 +128,12 @@ class EventFactory:
         else:
             print("Unknown Event Type: " + event_type)
 
-        ConsoleAccess.console_printer(event_desc)
+        logger.debug(event_desc)
 
     # Function that takes in serial outputs from the Arduino and logs them into the list for drawing on-screen
     def serial_receiver(self, serial_in):
         if not serial_in == "NO_SERIAL":
-            ConsoleAccess.console_printer("{} Sent to Serial Receiver".format(serial_in))
+            logger.debug("{} Sent to Serial Receiver".format(serial_in))
             self.serial_list_to_draw.insert(0, serial_in)
 
 

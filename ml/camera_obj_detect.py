@@ -20,20 +20,24 @@ from picamera import PiCamera
 from picamera.array import PiRGBArray
 from six.moves import range
 
-from hk_console_logger import ConsoleAccess
-from hk_draw_vision import VisionAccess
-from hk_event_queue import EventQueueAccess
-from hk_yaml_importer import YAMLAccess
-from hk_mission_parameteriser import mission_check
+from config.vision_config import *
+
+from functions.draw_vision import VisionAccess
+from events.event_queue import EventQueueAccess
+from utils.yaml_importer import YAMLAccess
+from functions.mission_parameteriser import mission_check
 
 # Doing this inside the class seemed problematic, so moved outside the class:
 # This is needed since the working directory is the object_detection folder.
-sys.path.append(YAMLAccess.OBJ_DETECT_PATH)
+sys.path.append(model_path)
 
 # Import utilites
 from utils import label_map_util as label_map_util
 from utils import visualization_utils as vis_util
 
+import logging
+
+logger = logging.getLogger("object-detection")
 
 # todo: determine whether this needs to be a dataclass
 @dataclass
@@ -162,7 +166,7 @@ class ObjectDetector(object):
                     self.objects_frame[display_str] = str(round(100 * np.squeeze(self.scores)[i]))
                     display_str_out = '{}: {}%'.format(display_str, round(100 * np.squeeze(self.scores)[i]))
 
-                    ConsoleAccess.console_printer(display_str_out)
+                    logger.debug(display_str_out)
 
                     # Grab positions of the detections (x, y)
                     y_min, x_min, y_max, x_max = np.squeeze(self.boxes)[i]
@@ -193,8 +197,8 @@ class ObjectDetector(object):
                         (primary_found, secondary_found, tertiary_found), (objective_p, objective_s, objective_t) = \
                             mission_check(name_split)
 
-                        ConsoleAccess.console_printer((primary_found, secondary_found, tertiary_found))
-                        ConsoleAccess.console_printer((objective_p, objective_s, objective_t))
+                        logger.debug((primary_found, secondary_found, tertiary_found))
+                        logger.debug((objective_p, objective_s, objective_t))
 
                         # If mission objectives are found for the detection then display the cropped image of the
                         # detection along with the mame and objective.
@@ -236,7 +240,7 @@ class ObjectDetector(object):
             # Get tick-count, this is for getting the frames-per-second (FPS)
             self.t2 = self.cv2.getTickCount()
 
-            ConsoleAccess.console_printer("FPS: " + str(self.frame_rate_calc))
+            logger.debug("FPS: " + str(self.frame_rate_calc))
 
             # If vision-mode is activated then pass the frame with all the details into the vision access module
             if self.disp_vision:
@@ -262,8 +266,7 @@ class ObjectDetector(object):
 
 if __name__ == "__main__":
     # Perform a test on the object detection module
-    ConsoleAccess.console_print_enable = True
-    ConsoleAccess.console_printer("Testing Object Detection")
+    logger.debug("Testing Object Detection")
     TestObjectDetect = ObjectDetector(True, False, YAMLAccess.IM_WIDTH, YAMLAccess.IM_HEIGHT, YAMLAccess.NUM_CLASSES,
                                       YAMLAccess.OBJ_DETECT_PATH, YAMLAccess.MODEL_NAME)
 
