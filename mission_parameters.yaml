@@ -1,0 +1,25 @@
+# Define mission parameters as: EVENT | ACTION, so you can assign an event such as:
+# 'person' and have the action be 'terminate' which will cause the termination sub-routines when a person is detected.
+# Or you can initialise a standing order with STAND_ORD|*action to take*, for example 'patrol'.
+# todo: find a way to handle multiple same events, only first event is taken if multiple of the same are inserted
+missions:
+  primary:
+    1: test_primary|test
+    2: person|terminate
+    3: STAND_ORD|patrol
+  secondary:
+    1: test_secondary|test
+  tertiary:
+    1: test_tertiary|test
+
+# Visual analysis configuration
+analysis_config:
+  # Minimum confidence required for a positive detection
+  confidence_threshold: 0.7
+
+# Parameter configurations for the yaml importer/mission parameteriser (all in seconds)
+parameter_config:
+  # Time for parameters to be refreshed (yaml file refresh)
+  parameters_refresh_time: 60
+  # Time to wait between objective processing
+  objective_process_time: 0.5

@@ -2,3 +2,4 @@
 stuff.txt
 __pycache__
 *.egg-info/
+temp/*

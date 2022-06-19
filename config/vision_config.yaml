@@ -1,0 +1,16 @@
+# Resolution configuration for the PiCamera
+resolution:
+  x: 1024
+  y: 768
+
+# Framerate for the PiCamera
+framerate: 10
+
+# Class/model configuration for Tensorflow in object detection
+class_model_config:
+  # Maximum classes that can be detected per-frame
+  classes: 90
+  # Path to the objection detection model directory (this can be wherever you want)
+  obj_detect_path: /home/pi/tensorflow1/models/research/object_detection
+  # Name of the detection model
+  model_name: ssdlite_mobilenet_v2_coco_2018_05_09
