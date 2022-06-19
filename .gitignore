@@ -3,3 +3,5 @@ stuff.txt
 __pycache__
 *.egg-info/
 temp/*
+models/tensorflow/*
+!models/tensorflow/.gitkeep
