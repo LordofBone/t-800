@@ -28,6 +28,10 @@ def unzip_model():
     tar.close()
 
 
-if __name__ == "__main__":
-    # download_model()
+def download_and_unzip_model():
+    download_model()
     unzip_model()
+
+
+if __name__ == "__main__":
+    download_and_unzip_model()
