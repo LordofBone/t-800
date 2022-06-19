@@ -5,3 +5,5 @@ __pycache__
 temp/*
 models/tensorflow/*
 !models/tensorflow/.gitkeep
+images/*
+!images/.gitkeep

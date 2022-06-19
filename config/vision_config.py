@@ -6,6 +6,9 @@ root_models_dir = Path(__file__).parent.parent / f"models/"
 # Path to the objection detection model directory
 object_detect_models_dir = Path(__file__).parent.parent / f"models/tensorflow"
 
+# Path for storing images
+object_detect_images_dir = Path(__file__).parent.parent / f"images/"
+
 # Resolution configuration for the PiCamera
 resolution_x = 1024
 resolution_y = 768
