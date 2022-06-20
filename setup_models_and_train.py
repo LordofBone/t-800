@@ -9,7 +9,7 @@ from utils.model_downloader import download_and_unzip_model as download_tensorfl
 
 def download_all_models_do_all_training():
     """
-    This function will download all models and train all models.
+    This function will download all pre-trained models/data and train the required models
     :return:
     """
     download_models_soran()
