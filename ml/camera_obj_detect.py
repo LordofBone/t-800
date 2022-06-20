@@ -42,6 +42,9 @@ logger = logging.getLogger("object-detection")
 # todo: determine whether this needs to be a dataclass
 @dataclass
 class ObjectDetector(object):
+    """
+    Function for detecting objects in a frame
+    """
     # Switch to show whether the vision of the HK is shown
     disp_vision: bool
     store_detects: bool
@@ -76,6 +79,10 @@ class ObjectDetector(object):
     skip_track_ids: bool = False
 
     def __post_init__(self):
+        """
+        This is the post init function for the object detector, it will set up the required models and settings etc.
+        :return:
+        """
         # Grab path to current working directory
         self.CWD_PATH = self.OBJ_DETECT_PATH
 
@@ -130,6 +137,11 @@ class ObjectDetector(object):
         self.freq = self.cv2.getTickFrequency()
 
     def run_analysis_stream(self):
+        """
+        This is the main function for the object detector, it will run the object detection and draw the results to the
+        screen
+        :return:
+        """
         for self.frame1 in CameraControlAccess.camera.capture_continuous(CameraControlAccess.rawCapture, format="bgr",
                                                                          use_video_port=False):
             self.objects_frame = {}
@@ -248,8 +260,11 @@ class ObjectDetector(object):
             CameraControlAccess.rawCapture.truncate(0)
             del self.frame
 
-    # Function for closing camera, clearing vision and clearing all cv2 windows
     def clear_analysis_stream(self):
+        """
+        Function for closing camera, clearing vision and clearing all cv2 windows
+        :return:
+        """
         CameraControlAccess.camera.close()
 
         VisionAccess.clear_vision()

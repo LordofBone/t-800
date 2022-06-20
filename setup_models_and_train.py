@@ -6,7 +6,17 @@ from Bot_Engine.Chatbot_8.bot_8_trainer import bot_trainer as bot_trainer_8
 
 from utils.model_downloader import download_and_unzip_model as download_tensorflow_vision_model
 
-bot_trainer_8()
-train_all_sentiment()
-download_models_soran()
-download_tensorflow_vision_model()
+
+def download_all_models_do_all_training():
+    """
+    This function will download all models and train all models.
+    :return:
+    """
+    download_models_soran()
+    train_all_sentiment()
+    bot_trainer_8()
+    download_tensorflow_vision_model()
+
+
+if __name__ == "__main__":
+    download_all_models_do_all_training()

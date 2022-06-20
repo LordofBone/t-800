@@ -9,6 +9,12 @@ from utils.yaml_importer import YAMLAccess
 
 
 def start_machine_vision(show_vision=True, store_detections=False):
+    """
+    This is the main function for starting the machine vision system
+    :param show_vision:
+    :param store_detections:
+    :return:
+    """
     # Instantiate object detection class
     real_time_analysis = ObjectDetector(show_vision, store_detections, YAMLAccess.IM_WIDTH, YAMLAccess.IM_HEIGHT,
                                         YAMLAccess.NUM_CLASSES,

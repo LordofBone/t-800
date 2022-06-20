@@ -13,16 +13,20 @@ import logging
 logger = logging.getLogger("yaml-importer")
 
 
-# Search function for looking through dictionaries (mainly for searching through mission objectives for confirmations
-# and returning objectives)
 def dict_search(values, search_for):
+    """
+    This is a search function for looking through dictionaries (mainly for searching through mission objectives for confirmations
+    and returning objectives)
+    :param values:
+    :param search_for:
+    :return:
+    """
     for k in values:
         if search_for in k:
             return True, k.split("|")[1]
     return False, "NO_MSN"
 
 
-# Main yaml dataclass
 @dataclass
 class YAMLData:
     primary: dict = field(default_factory=dict)
@@ -61,6 +65,10 @@ class YAMLData:
     S_WAIT: int = 60
 
     def __post_init__(self):
+        """
+        This is the post-init function for the YAMLData class, it will refresh the parameters from the yaml files
+        :return:
+        """
         # set up vision params from yaml config file
         with open(r'../config/vision_config.py') as file:
             documents = yaml.full_load(file)
@@ -90,9 +98,12 @@ class YAMLData:
 
         self.refresh_params()
 
-    # Separate function for grabbing mission parameters, so it can be threaded to enable the parameters to be updated
-    # in real time
     def refresh_params(self):
+        """
+        This function will refresh the parameters from the yaml files it can be threaded to enable the parameters to be updated
+        in real time
+        :return:
+        """
         self.primary = {}
         self.secondary = {}
         self.tertiary = {}
