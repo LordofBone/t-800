@@ -14,8 +14,11 @@ import logging
 logger = logging.getLogger("serial-events")
 
 
-# Gets the latest serial outputs from the serial interface
 def serial_getter():
+    """
+    This function is called from the serial_interfacing module to get the latest serial output from the serial interface
+    :return:
+    """
     while True:
         serial_in = SerialAccess.get_serial_list()
         # If serial output is present then process it, otherwise skip

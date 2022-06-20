@@ -8,6 +8,7 @@ import logging
 
 logger = logging.getLogger("pi-operations")
 
+
 def shutdown():
     # Switch off the Pi
     logger.debug("Switching Off")

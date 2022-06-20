@@ -50,14 +50,15 @@ logger = logging.getLogger("serial-interfacing")
 # todo: determine whether this needs to be a dataclass
 @dataclass
 class SerialController:
-    # Boolean that indicates whether serial is active or not
     serial_on: bool = False
 
-    # List of serial events
     serial_list: list = field(default_factory=list)
 
     def __post_init__(self):
-        # Configure serial from the settings in serial_config.yaml
+        """
+        This is the post init function for the serial controller, it will set up the serial connection and start the
+        threads :return:
+        """
         self.s1 = serial.Serial()
         self.s1.baudrate = YAMLAccess.SPEED
         self.s1.port = YAMLAccess.PORT
@@ -65,8 +66,11 @@ class SerialController:
         # Attempt to open the serial port with the above configuration
         self.open_serial()
 
-    # Get items from the serial output list
     def get_serial_list(self):
+        """
+        This will return the serial list, this is used to get the serial output from the Arduino
+        :return:
+        """
         try:
             # Pop 0 index so that it's FIFO rather than LIFO like the event handling as these want to be processed
             # in-order rather than latest first
@@ -75,8 +79,11 @@ class SerialController:
             event_popped = ""
         return event_popped
 
-    # This will try and open the serial port and will set the serial_on boolean as appropriate
     def open_serial(self):
+        """
+        This will try and open the serial port and will set the serial_on boolean as appropriate
+        :return:
+        """
         try:
             self.s1.open()
             self.serial_on = True
@@ -93,6 +100,10 @@ class SerialController:
     #  time, to prevent multiple conflicting writes, if you want to write something to serial a "SERIAL_WRITE" event
     #  is needed, along with the serial instruction to be sent
     def write_serial_processor(self):
+        """
+        This will grab the serial writes from the event factory and will write them to the Arduino
+        :return:
+        """
         while True:
             s_write = EventFactoryAccess.get_serial_list_to_write()
             if not s_write == "":
@@ -100,9 +111,13 @@ class SerialController:
             else:
                 sleep(1)
 
-    # This is where all serial writes to the Arduino are handled, it will also check if the serial fails and set a
-    # retry of the serial open and wait if so (wait time configurable in serial_config.yaml)
     def write_serial(self, to_write):
+        """
+        This is where all serial writes to the Arduino are handled, it will also check if the serial fails and set a
+        retry of the serial open and wait if so (wait time configurable in serial_config.yaml)
+        :param to_write:
+        :return:
+        """
         if self.s1.is_open:
             final_write = to_write + "\n"
             try:
@@ -119,6 +134,12 @@ class SerialController:
     # list - this will also try the serial connection and if it fails it will attempt to re-open the connection and
     # wait if so (wait time configurable in serial_config.yaml)
     def read_serial(self):
+        """
+        This is called and threaded to read the serial outputs from the Arduino and will append them to the read serial
+        list - this will also try the serial connection and if it fails it will attempt to re-open the connection and
+        wait if so (wait time configurable in serial_config.yaml)
+        :return:
+        """
         while True:
             if self.s1.is_open:
                 logger.debug("Reading Serial")

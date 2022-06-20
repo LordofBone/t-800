@@ -3,6 +3,8 @@ import logging
 logger = logging.getLogger("event-processor")
 
 
+# todo: remove strings and update this to use the proper queues
+# todo: make this more classy (superclasses)
 # todo: determine whether this needs to be a dataclass
 class EventFactory:
     def __init__(self):

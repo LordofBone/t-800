@@ -13,8 +13,13 @@ from hardware.serial_interfacing import SerialAccess
 from utils.yaml_importer import YAMLAccess
 
 
-# Function for getting items from a list/dictionary and catching index/key errors if there is no such item
 def get_list_item(ind, list_in):
+    """
+    Get an item from a list/dictionary and catch index/key errors if there is no such item
+    :param ind:
+    :param list_in:
+    :return:
+    """
     try:
         return list_in[ind]
     except IndexError:
@@ -26,6 +31,9 @@ def get_list_item(ind, list_in):
 # todo: determine whether this needs to be a dataclass
 @dataclass
 class HKVision:
+    """
+    This is the main function for drawing the vision onto the frame
+    """
     frame_x: int
     frame_y: int
     cv2 = cv2
@@ -50,13 +58,28 @@ class HKVision:
     show_smaller_img: bool = False
     smaller_image_scale: int = 4
 
-    # This is where the latest frame to be worked on is passed in, along with the FPS number to be drawn
     def add_frame(self, frame, frame_rate_calc):
+        """
+        This is where the latest frame to be worked on is passed in, along with the FPS number to be drawn
+        :param frame:
+        :param frame_rate_calc:
+        :return:
+        """
         self.frame = frame
         self.frame_rate_calc = frame_rate_calc
 
-    # This is for overlay frames onto the main frame
     def overlay_frame(self, image, image_x, image_y, overlay_text, overlay_text_2, overlay_text_3, time):
+        """
+        This is where the overlay image is drawn onto the frame
+        :param image:
+        :param image_x:
+        :param image_y:
+        :param overlay_text:
+        :param overlay_text_2:
+        :param overlay_text_3:
+        :param time:
+        :return:
+        """
         if not self.show_smaller_img:
             self.smaller_img = image
             self.smaller_img_x = image_x
@@ -76,23 +99,32 @@ class HKVision:
             self.draw_text(self.resized_image, 1, self.overlay_text_2, 5, 35)
             self.draw_text(self.resized_image, 1, self.overlay_text_3, 5, 55)
 
-    # This is where the latest events from the event factory are added in to be drawn
     def add_text_list_event(self):
+        """
+        This is where the latest events from the event processor are added in to be drawn
+        :return:
+        """
         event_insert = EventFactoryAccess.get_event_list_to_draw()
         if not event_insert == "":
             self.text_list_event.insert(0, event_insert)
             if len(self.text_list_event) == self.text_max_events:
                 self.text_list_event.pop(self.text_max_events - 1)
 
-    # This is where the latest events from the serial outputs are added in to be drawn
     def add_text_list_serial(self):
+        """
+        This is where the latest serial data from the serial interface is added in to be drawn
+        :return:
+        """
         get_serial = EventFactoryAccess.get_serial_list_to_draw()
         self.text_list_serial.insert(0, get_serial)
         if len(self.text_list_serial) == self.text_max_serial:
             self.text_list_serial.pop(self.text_max_serial - 1)
 
-    # This draws in the overlay picture set from the overlay function
     def picture_in_picture(self):
+        """
+        This is where the smaller image is drawn onto the frame
+        :return:
+        """
         # Get height/width of resized image
         h1, w1 = self.resized_image.shape[:2]
 
@@ -103,27 +135,53 @@ class HKVision:
         # Overlay resized image onto the main frame
         self.frame[pip_h:pip_h + h1, pip_w:pip_w + w1] = self.resized_image
 
-    # This grabs the mission parameters to be drawn
     def add_mission_params(self, primary, secondary, tertiary):
+        """
+        This is where the mission parameters are added in to be drawn
+        :param primary:
+        :param secondary:
+        :param tertiary:
+        :return:
+        """
         self.text_list_params_primary = primary
         self.text_list_params_secondary = secondary
         self.text_list_params_tertiary = tertiary
 
-    # Function for drawing text
     def draw_text(self, frame_in, font_size, text_d="no_fps_data", text_x=15, text_y=30, text_r=255, text_g=255,
                   text_b=255):
+        """
+        This is where the text is drawn onto the frame
+        :param frame_in:
+        :param font_size:
+        :param text_d:
+        :param text_x:
+        :param text_y:
+        :param text_r:
+        :param text_g:
+        :param text_b:
+        :return:
+        """
         self.cv2.putText(frame_in, text_d, (text_x, text_y), self.font, font_size, (text_b, text_g, text_r),
                          self.font_thickness,
                          self.cv2.LINE_AA)
 
-    # Function for going through lists and drawing them on screen as a moving set of items
     def draw_list(self, in_list, x_start=30, y_start=65):
+        """
+        This is where the list of events/serial data is drawn onto the frame
+        :param in_list:
+        :param x_start:
+        :param y_start:
+        :return:
+        """
         for i in range(0, self.text_max_events, 1):
             self.draw_text(self.frame, self.font_size, get_list_item(i, in_list), x_start, y_start)
             y_start += 25
 
-    # Main function that draws everything to the frame and displays it
     def draw_vision(self):
+        """
+        This is where the vision data is drawn onto the frame
+        :return:
+        """
         # Get latest events
         self.add_text_list_event()
 
@@ -188,8 +246,11 @@ class HKVision:
         if self.cv2.waitKey(1) == ord('q'):
             self.clear_vision()
 
-    # Function for clearing all cv2 windows
     def clear_vision(self):
+        """
+        This is where all the cv2 windows are cleared
+        :return:
+        """
         self.cv2.destroyAllWindows()
 
 

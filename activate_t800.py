@@ -11,6 +11,7 @@ import ml.ml_systems
 from events.event_queue import EventQueueAccess
 from hardware.serial_interfacing import SerialAccess
 from hardware.serial_to_events import serial_getter
+from functions.talk_control import TalkController
 
 from config.vision_config import *
 
@@ -49,6 +50,10 @@ def start_systems():
 
     # Start the mission parameteriser objective processor as a thread
     threading.Thread(target=functions.mission_parameteriser.objective_processor, daemon=False).start()
+
+    sleep(2)
+
+    threading.Thread(target=functions.talk_control.TalkController, daemon=False).start()
 
     # Start the ML systems, passing in the commandline arguments for showing vision and storing detections to file
     ml.ml_systems.start_machine_vision(vision_active, store_detections)

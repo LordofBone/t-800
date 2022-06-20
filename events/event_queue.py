@@ -17,35 +17,53 @@ import logging
 
 logger = logging.getLogger("event-queue")
 
+
 # todo: determine whether this needs to be a dataclass
 class EventQueue:
-    # Initialise the queue using PriorityQueue
     def __init__(self):
+        """
+        Initialise the event queue
+        """
         self.event_out = ["null_event", "should never see this"]
 
         self.priority_queue = PriorityQueue(
             maxsize=0)  # we initialise the PQ class instead of using a function to operate upon a list.
 
-    # Function for adding events in, add the type, content and priority
     def queue_addition(self, event_type, event_content, priority=3):
+        """
+        Add an event to the queue
+        :param event_type:
+        :param event_content:
+        :param priority:
+        :return:
+        """
         self.priority_queue.put((priority, event_type, event_content))
 
-    # Get the latest event from the queue; grabbing the type, content - will grab the highest priority first (lower
-    # the number, the higher the priority)
     def get_latest_event(self):
+        """
+        Get the latest event from the queue, will grab the highest priority first (lower the number,
+        the higher the priority)
+        :return:
+        """
         self.event_out = self.priority_queue.get()[1:3]
         return self.event_out
 
-    # The event spout is threaded out and called from higher modules, sends events out to the event processor
     def event_spout(self):
+        """
+        This function is called from higher modules to send events to the event processor
+        :return:
+        """
         while True:
             current_event = self.priority_queue.get()
             logger.debug(current_event)
             EventFactoryAccess.event_receiver(current_event)
 
-    # Test spout functions the same as the normal spout but has a delay in the loop to make it easier to read when
-    # testing
     def event_test_spout(self):
+        """
+        Test spout functions the same as the normal spout but has a delay in the loop to make it easier to read when
+        testing
+        :return:
+        """
         while True:
             current_event = self.priority_queue.get()
             logger.debug(current_event)

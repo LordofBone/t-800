@@ -14,8 +14,14 @@ import logging
 
 logger = logging.getLogger("mission-parameteriser")
 
+
 # Function for checking whether an input matches against missions set in the mission_parameters.yaml
 def mission_check(input_check):
+    """
+    This function checks whether an input matches against missions set in the mission_parameters.yaml
+    :param input_check:
+    :return:
+    """
     # Search through primary, secondary and tertiary objectives and return true if any of them are found, along with
     # the objectives
     # todo: need to work on a way to process multiple of the same detections (if needed?) at the
@@ -46,6 +52,11 @@ def mission_check(input_check):
 # Grabs the latest mission parameters from the mission_parameter.yaml
 # todo: add a switcher in here so that within the YAML purple or red plasma can be selected
 def get_params(test_mode=False):
+    """
+    This function gets the latest mission parameters from the YAML file and returns them as a dictionary
+    :param test_mode:
+    :return:
+    """
     while True:
         # Add the mission parameters to be displayed
         VisionAccess.add_mission_params(YAMLAccess.primary, YAMLAccess.secondary,
@@ -86,6 +97,10 @@ def get_params(test_mode=False):
 # the event factory so that it can be threaded seperately, so the event factory won't stop while it is waiting for
 # actions to complete
 def objective_processor():
+    """
+    This function processes objectives from the event factory and pushes them into actions
+    :return:
+    """
     while True:
         # Grab the latest objective from the factory list
         objective = EventFactoryAccess.get_mission_objective_list()
