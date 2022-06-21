@@ -4,7 +4,7 @@
 
 import threading
 
-from camera_obj_detect import ObjectDetector
+from ml.camera_obj_detect import ObjectDetector
 
 from config.vision_config import *
 

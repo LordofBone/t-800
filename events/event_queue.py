@@ -12,7 +12,7 @@ import threading
 from queue import PriorityQueue
 from time import sleep
 
-from event_processor import EventFactoryAccess
+from events.event_processor import EventFactoryAccess
 import logging
 
 logger = logging.getLogger("event-queue")

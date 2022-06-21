@@ -24,7 +24,7 @@ from functions.draw_vision import VisionAccess
 from events.event_queue import EventQueueAccess
 from utils.yaml_importer import YAMLAccess
 from functions.mission_parameteriser import mission_check
-from functions.camera_control import CameraControlAccess
+from hardware.camera_control import CameraControlAccess
 
 # Doing this inside the class seemed problematic, so moved outside the class:
 # This is needed since the working directory is the object_detection folder.
