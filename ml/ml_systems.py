@@ -5,20 +5,19 @@
 import threading
 
 from camera_obj_detect import ObjectDetector
-from utils.yaml_importer import YAMLAccess
+
+from config.vision_config import *
 
 
-def start_machine_vision(show_vision=True, store_detections=False):
+def start_machine_vision():
     """
     This is the main function for starting the machine vision system
-    :param show_vision:
-    :param store_detections:
     :return:
     """
     # Instantiate object detection class
-    real_time_analysis = ObjectDetector(show_vision, store_detections, YAMLAccess.IM_WIDTH, YAMLAccess.IM_HEIGHT,
-                                        YAMLAccess.NUM_CLASSES,
-                                        YAMLAccess.OBJ_DETECT_PATH, YAMLAccess.MODEL_NAME)
+    real_time_analysis = ObjectDetector(vision_active, store_detections, resolution_x, resolution_y,
+                                        classes,
+                                        model_path, model_packed_name)
 
     # Thread the analysis stream
     threading.Thread(target=real_time_analysis.run_analysis_stream, daemon=False).start()
@@ -26,4 +25,4 @@ def start_machine_vision(show_vision=True, store_detections=False):
 
 if __name__ == "__main__":
     # Perform a test on ML systems
-    start_machine_vision(True)
+    start_machine_vision()

@@ -114,7 +114,7 @@ class SerialController:
     def write_serial(self, to_write):
         """
         This is where all serial writes to the Arduino are handled, it will also check if the serial fails and set a
-        retry of the serial open and wait if so (wait time configurable in serial_config.yaml)
+        retry of the serial open and wait if so (wait time configurable in serial_config.py)
         :param to_write:
         :return:
         """
@@ -132,12 +132,12 @@ class SerialController:
 
     # This is called and threaded to read the serial outputs from the Arduino and will append them to the read serial
     # list - this will also try the serial connection and if it fails it will attempt to re-open the connection and
-    # wait if so (wait time configurable in serial_config.yaml)
+    # wait if so (wait time configurable in serial_config.py)
     def read_serial(self):
         """
         This is called and threaded to read the serial outputs from the Arduino and will append them to the read serial
         list - this will also try the serial connection and if it fails it will attempt to re-open the connection and
-        wait if so (wait time configurable in serial_config.yaml)
+        wait if so (wait time configurable in serial_config.py)
         :return:
         """
         while True:

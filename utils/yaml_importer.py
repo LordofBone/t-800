@@ -10,6 +10,8 @@ import yaml
 
 import logging
 
+from config.parameter_config import *
+
 logger = logging.getLogger("yaml-importer")
 
 
@@ -33,68 +35,11 @@ class YAMLData:
     secondary: dict = field(default_factory=dict)
     tertiary: dict = field(default_factory=dict)
 
-    # Set up camera constants
-    IM_WIDTH: int = 0
-    IM_HEIGHT: int = 0
-    IM_FPS: int = 0
-
-    # Number of classes the object detector can identify
-    NUM_CLASSES: str = ""
-
-    # Object detection code path
-    OBJ_DETECT_PATH: str = ""
-
-    # Name of the directory containing the object detection module we're using
-    MODEL_NAME: str = ""
-
-    # Confidence threshold for visual detection - will only run process on detected objects that are at or above this
-    # percentage
-    CONF_THRESHOLD: int = 0.75
-
-    # How many seconds per refresh of mission parameters
-    PARAM_REFRESH: int = 60
-
-    # How many seconds to process each objective
-    OBJ_PROCESS: int = 1
-
-    # Config of the serial port
-    PORT: int = 0
-    SPEED: int = 0
-
-    # Wait time in seconds between attempted connection attempts if serial is not present
-    S_WAIT: int = 60
-
     def __post_init__(self):
         """
         This is the post-init function for the YAMLData class, it will refresh the parameters from the yaml files
         :return:
         """
-        # set up vision params from yaml config file
-        with open(r'../config/vision_config.py') as file:
-            documents = yaml.full_load(file)
-
-            # Set up camera constants
-            self.IM_WIDTH = documents['resolution']['x']
-            self.IM_HEIGHT = documents['resolution']['y']
-            self.IM_FPS = documents['framerate']
-
-            # Number of classes the object detector can identify
-            self.NUM_CLASSES = documents['class_model_config']['classes']
-
-            # Object detection code path
-            self.OBJ_DETECT_PATH = documents['class_model_config']['obj_detect_path']
-
-            # Name of the directory containing the object detection module we're using
-            self.MODEL_NAME = documents['class_model_config']['model_name']
-
-        # Set up serial from yaml config file
-        with open(r'serial_config.yaml') as file:
-            documents = yaml.full_load(file)
-
-            # Get serial config
-            self.PORT = documents['port']
-            self.SPEED = documents['speed']
-            self.S_WAIT = documents['serial_reconnect']
 
         self.refresh_params()
 
@@ -108,22 +53,13 @@ class YAMLData:
         self.secondary = {}
         self.tertiary = {}
         # Get mission parameters from yaml config file
-        with open(r'../parameters/mission_parameters.yaml') as file:
+        with open(mission_parameters_file) as file:
             documents = yaml.full_load(file)
 
             # Extract sub-dicts
             self.primary = documents['missions']['primary']
             self.secondary = documents['missions']['secondary']
             self.tertiary = documents['missions']['tertiary']
-
-            # Get confidence threshold from the YAML file
-            self.CONF_THRESHOLD = documents['analysis_config']['confidence_threshold']
-
-            # Get parameter refresh time from the YAML file
-            self.PARAM_REFRESH = documents['parameter_config']['parameters_refresh_time']
-
-            # Get objective process time from the YAML file
-            self.OBJ_PROCESS = documents['parameter_config']['objective_process_time']
 
 
 # Instantiates the yaml dataclass so that other modules can import it and use the latest yaml data
