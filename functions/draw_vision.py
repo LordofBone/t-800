@@ -10,7 +10,8 @@ import numpy as np
 
 from events.event_processor import EventFactoryAccess
 from hardware.serial_interfacing import SerialAccess
-from utils.yaml_importer import YAMLAccess
+
+from config.vision_config import *
 
 
 def get_list_item(ind, list_in):
@@ -204,11 +205,11 @@ class HKVision:
 
         # Draw resolution of camera
         self.draw_text(self.frame, self.font_size,
-                       "RES_X={} RES_Y={}".format(YAMLAccess.IM_WIDTH, YAMLAccess.IM_HEIGHT),
+                       "RES_X={} RES_Y={}".format(resolution_x, resolution_y),
                        self.frame_x - int(self.frame_x * .60))
 
         # Draw confidence threshold
-        self.draw_text(self.frame, self.font_size, "CONF_THRESH={}".format(YAMLAccess.CONF_THRESHOLD),
+        self.draw_text(self.frame, self.font_size, "CONF_THRESH={}".format(CONF_THRESHOLD),
                        self.frame_x - int(self.frame_x * .88))
 
         # If serial access is on (Arduino plugged-in and ON) then draw latest serial outputs
@@ -255,4 +256,4 @@ class HKVision:
 
 
 # Instantiate the main class so that all modules can access the vision functions
-VisionAccess = HKVision(YAMLAccess.IM_WIDTH, YAMLAccess.IM_HEIGHT)
+VisionAccess = HKVision(resolution_x, resolution_y)

@@ -39,8 +39,9 @@ from time import sleep
 
 import serial
 
-from utils.yaml_importer import YAMLAccess
 from events.event_processor import EventFactoryAccess
+
+from config.serial_config import *
 
 import logging
 
@@ -60,8 +61,8 @@ class SerialController:
         threads :return:
         """
         self.s1 = serial.Serial()
-        self.s1.baudrate = YAMLAccess.SPEED
-        self.s1.port = YAMLAccess.PORT
+        self.s1.baudrate = speed
+        self.s1.port = port
 
         # Attempt to open the serial port with the above configuration
         self.open_serial()
