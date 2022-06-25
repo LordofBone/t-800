@@ -19,6 +19,8 @@ from picamera2 import Picamera2, Preview
 # print(raw.shape)
 # print(picam2.stream_configuration("raw"))
 
+# todo: check if anything needs changing to use picamera2 https://github.com/raspberrypi/picamera2/blob/main/examples/opencv_face_detect.py
+
 
 class CameraControl:
     def __init__(self):

@@ -29,7 +29,7 @@ from hardware.camera_control import CameraControlAccess
 # sys.path.append(str(object_detect_models_dir))
 
 # export PYTHONPATH=$PYTHONPATH:/home/dyson/T-800/models/models/research:/home/dyson/T-800/models/models/research/slim
-
+# todo: change to get raw stream using picamera2 https://github.com/raspberrypi/picamera2/blob/main/examples/opencv_face_detect.py
 
 # Import utilites
 from models.models.research.object_detection.utils import label_map_util as label_map_util
