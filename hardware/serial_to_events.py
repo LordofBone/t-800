@@ -7,7 +7,7 @@ from time import sleep
 
 from events.event_processor import EventFactoryAccess
 from events.event_queue import EventQueueAccess
-from serial_interfacing import SerialAccess
+from hardware.serial_interfacing import SerialAccess
 
 import logging
 

@@ -125,11 +125,11 @@ class SerialController:
                 self.s1.write(final_write.encode())
             except serial.serialutil.SerialException:
                 self.open_serial()
-                sleep(YAMLAccess.S_WAIT)
+                sleep(serial_reconnect)
         else:
             logger.debug("No Serial on WRITE - Retrying Connection")
             self.open_serial()
-            sleep(YAMLAccess.S_WAIT)
+            sleep(serial_reconnect)
 
     # This is called and threaded to read the serial outputs from the Arduino and will append them to the read serial
     # list - this will also try the serial connection and if it fails it will attempt to re-open the connection and
@@ -149,14 +149,14 @@ class SerialController:
                 except serial.serialutil.SerialException:
                     current_serial = ""
                     self.open_serial()
-                    sleep(YAMLAccess.S_WAIT)
+                    sleep(serial_reconnect)
                 if not current_serial == "":
                     logger.debug(current_serial)
                     self.serial_list.append(current_serial)
             else:
                 logger.debug("No Serial on READ - Retrying Connection")
                 self.open_serial()
-                sleep(YAMLAccess.S_WAIT)
+                sleep(serial_reconnect)
 
 
 # Instantiate the class so serial interface can be accessed from other modules
