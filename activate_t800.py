@@ -56,7 +56,7 @@ def start_systems():
     threading.Thread(target=functions.talk_control.TalkController, daemon=False).start()
 
     # Start the ML systems, passing in the commandline arguments for showing vision and storing detections to file
-    ml.ml_systems.start_machine_vision(vision_active, store_detections)
+    ml.ml_systems.start_machine_vision()
 
     # serial write test
     # todo: probably needs removing

@@ -35,6 +35,16 @@ class YAMLData:
     secondary: dict = field(default_factory=dict)
     tertiary: dict = field(default_factory=dict)
 
+    # Confidence threshold for visual detection - will only run process on detected objects that are at or above this
+    # percentage
+    CONF_THRESHOLD: int = 0.75
+
+    # How many seconds per refresh of mission parameters
+    PARAM_REFRESH: int = 60
+
+    # How many seconds to process each objective
+    OBJ_PROCESS: int = 1
+
     def __post_init__(self):
         """
         This is the post-init function for the YAMLData class, it will refresh the parameters from the yaml files
@@ -60,6 +70,15 @@ class YAMLData:
             self.primary = documents['missions']['primary']
             self.secondary = documents['missions']['secondary']
             self.tertiary = documents['missions']['tertiary']
+
+            # Get confidence threshold from the YAML file
+            self.CONF_THRESHOLD = documents['analysis_config']['confidence_threshold']
+
+            # Get parameter refresh time from the YAML file
+            self.PARAM_REFRESH = documents['parameter_config']['parameters_refresh_time']
+
+            # Get objective process time from the YAML file
+            self.OBJ_PROCESS = documents['parameter_config']['objective_process_time']
 
 
 # Instantiates the yaml dataclass so that other modules can import it and use the latest yaml data

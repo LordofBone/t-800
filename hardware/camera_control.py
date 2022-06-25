@@ -1,9 +1,23 @@
-from picamera import PiCamera
-from picamera.array import PiRGBArray
-
 from time import sleep
 
 from config.vision_config import *
+
+from picamera2 import Picamera2, Preview
+
+
+# picam2 = Picamera2()
+# picam2.start_preview(Preview.QTGL)
+#
+# preview_config = picam2.preview_configuration(raw={"size": picam2.sensor_resolution})
+# print(preview_config)
+# picam2.configure(preview_config)
+#
+# picam2.start()
+# time.sleep(2)
+#
+# raw = picam2.capture_array("raw")
+# print(raw.shape)
+# print(picam2.stream_configuration("raw"))
 
 
 class CameraControl:
@@ -11,13 +25,22 @@ class CameraControl:
         """
         Initialise the camera
         """
-        self.camera = PiCamera()
+        self.camera = Picamera2()
         self.camera.resolution = (resolution_x, resolution_y)
         self.camera.framerate = framerate
 
+        preview_config = self.camera.preview_configuration(raw={"size": self.camera.sensor_resolution})
+
+        self.camera.configure(preview_config)
+
+        self.camera.start()
+
         # Grab reference to the raw capture
-        self.rawCapture = PiRGBArray(CameraControlAccess.camera, size=(resolution_x, resolution_y))
-        self.rawCapture.truncate(0)
+        # self.rawCapture = PiRGBArray(CameraControlAccess.camera, size=(resolution_x, resolution_y))
+
+        self.rawCapture = self.camera.capture_array("raw")
+
+        # self.rawCapture.truncate(0)
 
     def take_pic(self, name):
         """

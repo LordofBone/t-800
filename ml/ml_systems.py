@@ -17,7 +17,7 @@ def start_machine_vision():
     # Instantiate object detection class
     real_time_analysis = ObjectDetector(vision_active, store_detections, resolution_x, resolution_y,
                                         classes,
-                                        model_path, model_packed_name)
+                                        object_detect_data_dir, model_path)
 
     # Thread the analysis stream
     threading.Thread(target=real_time_analysis.run_analysis_stream, daemon=False).start()

@@ -26,13 +26,14 @@ from utils.yaml_importer import YAMLAccess
 from functions.mission_parameteriser import mission_check
 from hardware.camera_control import CameraControlAccess
 
-# Doing this inside the class seemed problematic, so moved outside the class:
-# This is needed since the working directory is the object_detection folder.
-sys.path.append(model_path)
+# sys.path.append(str(object_detect_models_dir))
+
+# export PYTHONPATH=$PYTHONPATH:/home/dyson/T-800/models/models/research:/home/dyson/T-800/models/models/research/slim
+
 
 # Import utilites
-from utils import label_map_util as label_map_util
-from utils import visualization_utils as vis_util
+from models.models.research.object_detection.utils import label_map_util as label_map_util
+from models.models.research.object_detection.utils import visualization_utils as vis_util
 
 import logging
 
@@ -91,7 +92,7 @@ class ObjectDetector(object):
         self.PATH_TO_CKPT = os.path.join(self.CWD_PATH, self.MODEL_NAME, 'frozen_inference_graph.pb')
 
         # Path to label map file
-        self.PATH_TO_LABELS = os.path.join(self.CWD_PATH, 'data', 'mscoco_label_map.pbtxt')
+        self.PATH_TO_LABELS = os.path.join(self.CWD_PATH, 'mscoco_label_map.pbtxt')
 
         # Load the label map.
         # Label maps map indices to category names, so that when the convolution
