@@ -13,7 +13,9 @@ from hardware.serial_interfacing import SerialAccess
 from hardware.serial_to_events import serial_getter
 from functions.talk_control import TalkController
 
-from config.vision_config import *
+import logging
+
+logger = logging.getLogger("t800-activation-system")
 
 
 def start_systems():
@@ -30,33 +32,54 @@ def start_systems():
     # Start the event queue as a thread
     threading.Thread(target=EventQueueAccess.event_spout, daemon=False).start()
 
+    logger.info("Started Event Queue")
+
     # Start the mission parameteriser parameter getter as a thread
     threading.Thread(target=functions.mission_parameteriser.get_params, daemon=False).start()
 
+    logger.info("Started Mission Parameteriser")
+
     # Start the serial access reader as a thread
     threading.Thread(target=SerialAccess.read_serial, daemon=False).start()
+
+    logger.info("Started Serial Access")
 
     sleep(2)
 
     # Start the serial write processor as a thread
     threading.Thread(target=SerialAccess.write_serial_processor, daemon=False).start()
 
+    logger.info("Started Serial Write Processor")
+
     sleep(2)
 
     # Start the serial getter function as a thread
     threading.Thread(target=serial_getter, daemon=False).start()
+
+    logger.info("Started Serial Getter")
 
     sleep(2)
 
     # Start the mission parameteriser objective processor as a thread
     threading.Thread(target=functions.mission_parameteriser.objective_processor, daemon=False).start()
 
+    logger.info("Started Mission Parameteriser Objective Processor")
+
     sleep(2)
 
     threading.Thread(target=functions.talk_control.TalkController, daemon=False).start()
 
+    logger.info("Started Talk Controller")
+
     # Start the ML systems, passing in the commandline arguments for showing vision and storing detections to file
     ml.ml_systems.start_machine_vision()
+
+    logger.info("Started Machine Vision")
+
+    # Start the ML systems, passing in the commandline arguments for showing vision and storing detections to file
+    ml.ml_systems.start_machine_vision()
+
+    logger.info("Started Machine Vision")
 
     # serial write test
     # todo: probably needs removing

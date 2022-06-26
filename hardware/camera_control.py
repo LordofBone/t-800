@@ -6,6 +6,10 @@ from picamera2 import Picamera2, Preview
 
 from time import sleep
 
+import logging
+
+logger = logging.getLogger("camera-hardware")
+
 
 class CameraControl:
     def __init__(self):
@@ -15,13 +19,12 @@ class CameraControl:
         self.camera_resolution = (resolution_x, resolution_y)
 
         self.camera = Picamera2()
-        print(self.camera.sensor_resolution)
 
         preview_config = self.camera.preview_configuration(main={"size": self.camera_resolution})
 
         self.camera.configure(preview_config)
 
-        print(self.camera.camera_configuration)
+        logging.info(f"Camera initialised resolution: {self.camera.camera_configuration}")
 
         self.camera.start()
         sleep(2)
