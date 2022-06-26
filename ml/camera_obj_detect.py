@@ -143,15 +143,17 @@ class ObjectDetector(object):
         screen
         :return:
         """
-        for self.frame1 in CameraControlAccess.camera.capture_continuous(CameraControlAccess.rawCapture, format="bgr",
-                                                                         use_video_port=False):
+        while True:
+            self.frame1 = CameraControlAccess.camera.capture_array("main")
+
             self.objects_frame = {}
 
             self.t1 = self.cv2.getTickCount()
 
             # Acquire frame and expand frame dimensions to have shape: [1, None, None, 3]
             # i.e. a single-column array, where each item in the column has the pixel RGB value
-            self.frame = np.copy(self.frame1.array)
+            # self.frame = np.copy(self.frame1.array)
+            self.frame = np.copy(self.frame1)
             self.frame.setflags(write=True)
             self.frame_rgb = self.cv2.cvtColor(self.frame, self.cv2.COLOR_BGR2RGB)
             self.frame_expanded = np.expand_dims(self.frame_rgb, axis=0)
@@ -173,6 +175,7 @@ class ObjectDetector(object):
                     self.objects_frame[display_str] = str(round(100 * np.squeeze(self.scores)[i]))
                     display_str_out = '{}: {}%'.format(display_str, round(100 * np.squeeze(self.scores)[i]))
 
+                    print(display_str_out)
                     logger.debug(display_str_out)
 
                     # Grab positions of the detections (x, y)
@@ -180,8 +183,8 @@ class ObjectDetector(object):
                     # Have added this in here as without it, it seems to report 0,0,0,0 boxes of nothing for some reason
                     # Then convert to left, right, top, bottom for image cropping
                     if y_min > 0.00 and x_min > 0.00 and y_max > 0.00 and x_max > 0.00:
-                        (left, right, top, bottom) = (x_min * YAMLAccess.IM_WIDTH, x_max * YAMLAccess.IM_WIDTH,
-                                                      y_min * YAMLAccess.IM_HEIGHT, y_max * YAMLAccess.IM_HEIGHT)
+                        (left, right, top, bottom) = (x_min * resolution_x, x_max * resolution_x,
+                                                      y_min * resolution_y, y_max * resolution_y)
 
                         # Crop detection from the main frame
                         crop_img = self.frame[int(top):int(bottom), int(left):int(right)]
@@ -258,7 +261,7 @@ class ObjectDetector(object):
             self.frame_rate_calc = 1 / self.time1
 
             # Truncate the latest capture and delete the frame to save memory
-            CameraControlAccess.rawCapture.truncate(0)
+            # CameraControlAccess.rawCapture.truncate(0)
             del self.frame
 
     def clear_analysis_stream(self):
