@@ -76,11 +76,6 @@ def start_systems():
 
     logger.info("Started Machine Vision")
 
-    # Start the ML systems, passing in the commandline arguments for showing vision and storing detections to file
-    ml.ml_systems.start_machine_vision()
-
-    logger.info("Started Machine Vision")
-
     # serial write test
     # todo: probably needs removing
     sleep(30)

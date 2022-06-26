@@ -25,6 +25,7 @@ class CameraControl:
         logging.info(f"Camera initialised resolution: {self.camera.camera_configuration}")
 
         self.camera.start()
+
         sleep(2)
 
     def take_pic(self, name):
