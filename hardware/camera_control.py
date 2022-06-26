@@ -1,5 +1,3 @@
-from time import sleep
-
 from config.vision_config import *
 
 from picamera2 import Picamera2, Preview
