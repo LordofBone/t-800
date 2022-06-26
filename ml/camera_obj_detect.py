@@ -9,7 +9,6 @@
 
 import calendar
 import os
-import sys
 import time
 from dataclasses import dataclass
 
@@ -25,11 +24,6 @@ from events.event_queue import EventQueueAccess
 from utils.yaml_importer import YAMLAccess
 from functions.mission_parameteriser import mission_check
 from hardware.camera_control import CameraControlAccess
-
-# sys.path.append(str(object_detect_models_dir))
-
-# export PYTHONPATH=$PYTHONPATH:/home/dyson/T-800/models/models/research:/home/dyson/T-800/models/models/research/slim
-# todo: change to get raw stream using picamera2 https://github.com/raspberrypi/picamera2/blob/main/examples/opencv_face_detect.py
 
 # Import utilites
 from models.models.research.object_detection.utils import label_map_util as label_map_util
@@ -152,7 +146,6 @@ class ObjectDetector(object):
 
             # Acquire frame and expand frame dimensions to have shape: [1, None, None, 3]
             # i.e. a single-column array, where each item in the column has the pixel RGB value
-            # self.frame = np.copy(self.frame1.array)
             self.frame = np.copy(self.frame1)
             self.frame.setflags(write=True)
             self.frame_rgb = self.cv2.cvtColor(self.frame, self.cv2.COLOR_BGR2RGB)
@@ -175,7 +168,6 @@ class ObjectDetector(object):
                     self.objects_frame[display_str] = str(round(100 * np.squeeze(self.scores)[i]))
                     display_str_out = '{}: {}%'.format(display_str, round(100 * np.squeeze(self.scores)[i]))
 
-                    print(display_str_out)
                     logger.debug(display_str_out)
 
                     # Grab positions of the detections (x, y)
@@ -237,7 +229,7 @@ class ObjectDetector(object):
 
             # Draw the results of the detection
             vis_util.visualize_boxes_and_labels_on_image_array(
-                self.frame,
+                self.frame_rgb,
                 np.squeeze(self.boxes),
                 np.squeeze(self.classes).astype(np.int32),
                 np.squeeze(self.scores),
@@ -279,7 +271,7 @@ class ObjectDetector(object):
 if __name__ == "__main__":
     # Perform a test on the object detection module
     logger.debug("Testing Object Detection")
-    TestObjectDetect = ObjectDetector(True, False, YAMLAccess.IM_WIDTH, YAMLAccess.IM_HEIGHT, YAMLAccess.NUM_CLASSES,
-                                      YAMLAccess.OBJ_DETECT_PATH, YAMLAccess.MODEL_NAME)
+    TestObjectDetect = ObjectDetector(vision_active, store_detections, resolution_x, resolution_y,
+                                      classes, object_detect_data_dir, model_path)
 
     TestObjectDetect.run_analysis_stream()

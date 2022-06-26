@@ -7,23 +7,6 @@ from picamera2 import Picamera2, Preview
 from time import sleep
 
 
-# picam2 = Picamera2()
-# picam2.start_preview(Preview.QTGL)
-#
-# preview_config = picam2.preview_configuration(raw={"size": picam2.sensor_resolution})
-# print(preview_config)
-# picam2.configure(preview_config)
-#
-# picam2.start()
-# time.sleep(2)
-#
-# raw = picam2.capture_array("raw")
-# print(raw.shape)
-# print(picam2.stream_configuration("raw"))
-
-# todo: check if anything needs changing to use picamera2 https://github.com/raspberrypi/picamera2/blob/main/examples/opencv_face_detect.py
-
-
 class CameraControl:
     def __init__(self):
         """
@@ -34,18 +17,14 @@ class CameraControl:
         self.camera = Picamera2()
         print(self.camera.sensor_resolution)
 
-        preview_config = self.camera.preview_configuration(raw={"size": self.camera_resolution})
-        print(preview_config)
+        preview_config = self.camera.preview_configuration(main={"size": self.camera_resolution})
+
         self.camera.configure(preview_config)
 
         print(self.camera.camera_configuration)
 
         self.camera.start()
         sleep(2)
-
-        self.raw = self.camera.capture_array("raw")
-        print(self.raw.shape)
-        print(self.camera.stream_configuration("raw"))
 
     def take_pic(self, name):
         """
