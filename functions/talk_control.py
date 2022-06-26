@@ -29,21 +29,20 @@ class TalkController:
         """
         self.interrupt = True
 
-    def talk_loop(self):
+    def listen_stt(self):
         """
-        This is the main loop that runs the STT and bot interaction.
+        This is the main function that runs the STT and bot interaction.
         :return:
         """
-        while True:
-            self.inference_output = run_stt_inference()
+        self.inference_output = run_stt_inference()
 
-            logger.debug(self.inference_output)
+        logger.debug(self.inference_output)
 
-            self.bot_response = (BotControl.input_get_response(self.inference_output))
+        self.bot_response = (BotControl.input_get_response(self.inference_output))
 
-            logger.debug(self.bot_response)
+        logger.debug(self.bot_response)
 
-            self.command_checker()
+        self.command_checker()
 
     def command_checker(self):
         """
