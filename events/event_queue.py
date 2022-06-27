@@ -44,7 +44,7 @@ class EventQueue:
         :return:
         """
         self.event_out = self.priority_queue.get()
-        if self.event_out[1] == event_match:
+        if self.event_out[1] in event_match:
             return self.event_out
         else:
             self.priority_queue.put(self.event_out)
@@ -56,7 +56,7 @@ class EventQueue:
         :return:
         """
         while True:
-            event = self.get_latest_event("EVENT_TYPE_1")
+            event = self.get_latest_event(["EVENT_TYPE_1"])
             if event:
                 print(event)
 
@@ -68,7 +68,7 @@ class EventQueue:
         :return:
         """
         while True:
-            event = self.get_latest_event("EVENT_TYPE_2")
+            event = self.get_latest_event(["EVENT_TYPE_2"])
             if event:
                 print(event)
 
