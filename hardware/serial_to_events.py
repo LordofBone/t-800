@@ -5,8 +5,8 @@
 
 from time import sleep
 
-from events.event_processor import EventFactoryAccess
-from events.event_queue import EventQueueAccess
+from events.event_queue import EventQueueAccess, DrawListQueueAccess
+from events.event_types import SERIAL_DRAW
 from hardware.serial_interfacing import SerialAccess
 
 import logging
@@ -22,11 +22,11 @@ def serial_getter():
     while True:
         serial_in = SerialAccess.get_serial_list()
         # If serial output is present then process it, otherwise skip
-        if not serial_in == "":
+        if not serial_in == "" or "NO_SERIAL":
             logger.debug(serial_in)
 
             # Sent the serial outputs into the event factory's serial receiver list for processing
-            EventFactoryAccess.serial_receiver(serial_in)
+            DrawListQueueAccess.queue_addition(event_type=SERIAL_DRAW, event_content=serial_in, priority=3)
 
             # This is where the outputs are processed for commands to be sent to the event queue
             # todo: add in more

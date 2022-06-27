@@ -11,7 +11,7 @@ import numpy as np
 from hardware.serial_interfacing import SerialAccess
 
 from events.event_queue import DrawListQueueAccess
-from events.event_types import SERIAL_READ, SERIAL_WRITE, ANY
+from events.event_types import SERIAL_DRAW, ANY
 
 from config.vision_config import *
 
@@ -119,7 +119,7 @@ class HKVision:
         This is where the latest serial data from the serial interface is added in to be drawn
         :return:
         """
-        event = DrawListQueueAccess.get_latest_event([SERIAL_WRITE, SERIAL_READ])
+        event = DrawListQueueAccess.get_latest_event([SERIAL_DRAW])
         if event:
             self.text_list_serial.insert(0, event[1])
             if len(self.text_list_serial) == self.text_max_serial:
