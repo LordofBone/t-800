@@ -6,8 +6,8 @@
 from time import sleep
 
 from functions.draw_vision import VisionAccess
-from events.event_processor import EventFactoryAccess
 from events.event_queue import EventQueueAccess
+from events.event_types import ANY
 from utils.yaml_importer import YAMLAccess, dict_search
 
 import logging
@@ -38,11 +38,11 @@ def mission_check(input_check):
     # If missions are found pass them into the event queue with appropriate priority depending on mission,
     # along with the objective and name of confirmed mission target
     if primary_found:
-        EventQueueAccess.queue_addition('PRI_MSN:{}'.format(input_check), objective_p, 1)
+        EventQueueAccess.queue_addition(f'PRI_MSN:{input_check}', objective_p, 1)
     if secondary_found:
-        EventQueueAccess.queue_addition('SEC_MSN:{}'.format(input_check), objective_s, 2)
+        EventQueueAccess.queue_addition(f'SEC_MSN:{input_check}', objective_s, 2)
     if tertiary_found:
-        EventQueueAccess.queue_addition('TER_MSN:{}'.format(input_check), objective_t, 3)
+        EventQueueAccess.queue_addition(f'TER_MSN:{input_check}', objective_t, 3)
 
     # Return tuples so that when this is called from another module the details can be used elsewhere (for instance
     # in object detection these are used to draw the info onto the screen)
@@ -75,13 +75,13 @@ def get_params(test_mode=False):
 
         # If standing orders are detected push them into the event queue with the appropriate priority
         if primary_found:
-            logger.debug('Standing Order: "{}" found'.format(objective_p))
+            logger.debug(f'Standing Order: "{objective_p}" found')
             EventQueueAccess.queue_addition("PRI_MSN:STAND_ORD", objective_p, 1)
         if secondary_found:
-            logger.debug('Standing Order: "{}" found'.format(objective_s))
+            logger.debug(f'Standing Order: "{objective_s}" found')
             EventQueueAccess.queue_addition("SEC_MSN:STAND_ORD", objective_s, 2)
         if tertiary_found:
-            logger.debug('Standing Order: "{}" found'.format(objective_t))
+            logger.debug(f'Standing Order: "{objective_t}" found')
             EventQueueAccess.queue_addition("TER_MSN:STAND_ORD", objective_t, 3)
         # If test mode is activated then break the loop
         if test_mode:
@@ -103,7 +103,7 @@ def objective_processor():
     """
     while True:
         # Grab the latest objective from the factory list
-        objective = EventFactoryAccess.get_mission_objective_list()
+        objective = EventQueueAccess.get_latest_event(ANY)
         # If an objective is present from the list then process it and console print
         if not objective == "":
             logger.debug(objective)
