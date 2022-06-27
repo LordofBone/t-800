@@ -2,6 +2,8 @@ import time
 import board
 from digitalio import DigitalInOut, Direction, Pull
 
+from events.event_queue import EventQueueAccess
+
 BUTTON_PIN = board.D17
 JOYDOWN_PIN = board.D27
 JOYLEFT_PIN = board.D22
@@ -19,7 +21,7 @@ button, joyup, joydown, joyleft, joyright, joyselect = buttons
 
 while True:
     if not button.value:
-        print("Button pressed")
+        EventQueueAccess.queue_addition("HARDWARE_PI", "SHUTDOWN", 4)
     if not joyup.value:
         print("Joystick up")
     if not joydown.value:
