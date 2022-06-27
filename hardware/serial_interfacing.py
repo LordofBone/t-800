@@ -39,9 +39,11 @@ from time import sleep
 
 import serial
 
-from events.event_processor import EventFactoryAccess
+from events.event_queue import EventQueueAccess
 
 from config.serial_config import *
+
+from events.event_types import SERIAL_READ, SERIAL_WRITE
 
 import logging
 
@@ -106,7 +108,7 @@ class SerialController:
         :return:
         """
         while True:
-            s_write = EventFactoryAccess.get_serial_list_to_write()
+            s_write = EventQueueAccess.get_latest_event([SERIAL_WRITE, SERIAL_READ])
             if not s_write == "":
                 self.write_serial(s_write)
             else:
