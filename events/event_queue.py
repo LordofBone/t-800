@@ -79,6 +79,8 @@ class EventQueue:
 # accessing will use the same instance
 EventQueueAccess = EventQueue()
 
+DrawListQueueAccess = EventQueue()
+
 # when this module is called on its own run a quick test, check 'Testing' folder for more tests around this
 if __name__ == "__main__":
     # start the thread for this instance
