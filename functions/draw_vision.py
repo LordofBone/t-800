@@ -8,8 +8,10 @@ from dataclasses import dataclass, field
 import cv2
 import numpy as np
 
-from events.event_processor import EventFactoryAccess
 from hardware.serial_interfacing import SerialAccess
+
+from events.event_queue import *
+from events.event_types import SERIAL_READ, SERIAL_WRITE
 
 from config.vision_config import *
 
@@ -105,21 +107,23 @@ class HKVision:
         This is where the latest events from the event processor are added in to be drawn
         :return:
         """
-        event_insert = EventFactoryAccess.get_event_list_to_draw()
-        if not event_insert == "":
-            self.text_list_event.insert(0, event_insert)
-            if len(self.text_list_event) == self.text_max_events:
-                self.text_list_event.pop(self.text_max_events - 1)
+        event = EventQueueAccess.get_latest_event(ANY)
+        if event:
+            if not event == "":
+                self.text_list_event.insert(0, event)
+                if len(self.text_list_event) == self.text_max_events:
+                    self.text_list_event.pop(self.text_max_events - 1)
 
     def add_text_list_serial(self):
         """
         This is where the latest serial data from the serial interface is added in to be drawn
         :return:
         """
-        get_serial = EventFactoryAccess.get_serial_list_to_draw()
-        self.text_list_serial.insert(0, get_serial)
-        if len(self.text_list_serial) == self.text_max_serial:
-            self.text_list_serial.pop(self.text_max_serial - 1)
+        event = EventQueueAccess.get_latest_event([SERIAL_WRITE, SERIAL_READ])
+        if event:
+            self.text_list_serial.insert(0, event[1])
+            if len(self.text_list_serial) == self.text_max_serial:
+                self.text_list_serial.pop(self.text_max_serial - 1)
 
     def picture_in_picture(self):
         """
