@@ -11,8 +11,6 @@
 import threading
 from queue import PriorityQueue
 from time import sleep
-
-from events.event_processor import EventFactoryAccess
 import logging
 
 logger = logging.getLogger("event-queue")
@@ -39,34 +37,41 @@ class EventQueue:
         """
         self.priority_queue.put((priority, event_type, event_content))
 
-    def get_latest_event(self):
+    def get_latest_event(self, event_match):
         """
         Get the latest event from the queue, will grab the highest priority first (lower the number,
         the higher the priority)
         :return:
         """
-        self.event_out = self.priority_queue.get()[1:3]
-        return self.event_out
+        self.event_out = self.priority_queue.get()
+        if self.event_out[1] == event_match:
+            return self.event_out
+        else:
+            self.priority_queue.put(self.event_out)
+            return None
 
-    def event_spout(self):
+    def event_tester_1(self):
         """
-        This function is called from higher modules to send events to the event processor
+        This is a test function to test the event queue
         :return:
         """
         while True:
-            current_event = self.priority_queue.get()
-            logger.debug(current_event)
-            EventFactoryAccess.event_receiver(current_event)
+            event = self.get_latest_event("EVENT_TYPE_1")
+            if event:
+                print(event)
 
-    def event_test_spout(self):
+            sleep(1)
+
+    def event_tester_2(self):
         """
-        Test spout functions the same as the normal spout but has a delay in the loop to make it easier to read when
-        testing
+        This is a test function to test the event queue
         :return:
         """
         while True:
-            current_event = self.priority_queue.get()
-            logger.debug(current_event)
+            event = self.get_latest_event("EVENT_TYPE_2")
+            if event:
+                print(event)
+
             sleep(1)
 
 
@@ -77,13 +82,19 @@ EventQueueAccess = EventQueue()
 # when this module is called on its own run a quick test, check 'Testing' folder for more tests around this
 if __name__ == "__main__":
     # start the thread for this instance
-    threading.Thread(target=EventQueueAccess.event_test_spout, daemon=False).start()
 
     # testing the main event queue that will be used by other modules in the overall system
-    EventQueueAccess.queue_addition("ACCESS", "BASIC TEST 2", 2)
-    EventQueueAccess.queue_addition("ACCESS", "BASIC TEST 3", 3)
-    EventQueueAccess.queue_addition("ACCESS", "BASIC TEST 4", 4)
-    EventQueueAccess.queue_addition("ACCESS", "BASIC TEST 1", 1)
+    EventQueueAccess.queue_addition("EVENT_TYPE_1", "BASIC TEST 2", 2)
+    EventQueueAccess.queue_addition("EVENT_TYPE_1", "BASIC TEST 3", 3)
+    EventQueueAccess.queue_addition("EVENT_TYPE_1", "BASIC TEST 4", 4)
+    EventQueueAccess.queue_addition("EVENT_TYPE_1", "BASIC TEST 1", 1)
+    EventQueueAccess.queue_addition("EVENT_TYPE_2", "BASIC TEST 5", 1)
+    EventQueueAccess.queue_addition("EVENT_TYPE_2", "BASIC TEST 6", 4)
+    EventQueueAccess.queue_addition("EVENT_TYPE_2", "BASIC TEST 7", 3)
+    EventQueueAccess.queue_addition("EVENT_TYPE_2", "BASIC TEST 8", 1)
+
+    threading.Thread(target=EventQueueAccess.event_tester_1, daemon=False).start()
+    threading.Thread(target=EventQueueAccess.event_tester_2, daemon=False).start()
 
     # Freeze the queue to prevent the program from exiting out before all events are processed - this isn't required
     # when the main program is running
