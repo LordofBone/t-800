@@ -11,7 +11,7 @@ import numpy as np
 from hardware.serial_interfacing import SerialAccess
 
 from events.event_queue import *
-from events.event_types import SERIAL_READ, SERIAL_WRITE
+from events.event_types import SERIAL_READ, SERIAL_WRITE, ANY
 
 from config.vision_config import *
 
