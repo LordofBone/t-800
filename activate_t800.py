@@ -12,6 +12,7 @@ from events.event_queue import EventQueueAccess
 from hardware.serial_interfacing import SerialAccess
 from hardware.serial_to_events import serial_getter
 from functions.talk_control import TalkController
+from hardware.pi_operations import PiOperationsAccess
 
 import logging
 
@@ -29,10 +30,9 @@ def start_systems():
     Start the ML systems, passing in the commandline arguments for showing vision and storing detections to file
     :return:
     """
-    # Start the event queue as a thread
-    threading.Thread(target=EventQueueAccess.event_spout, daemon=False).start()
 
-    logger.info("Started Event Queue")
+    # Start pi hardware operations as a thread
+    threading.Thread(target=PiOperationsAccess.queue_checker, daemon=False).start()
 
     # Start the mission parameteriser parameter getter as a thread
     threading.Thread(target=functions.mission_parameteriser.get_params, daemon=False).start()
