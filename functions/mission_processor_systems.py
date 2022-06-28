@@ -125,6 +125,9 @@ class MissionProcessor:
             secondary_found, objective_s = dict_search(YAMLAccess.secondary.values(), event[1])
             tertiary_found, objective_t = dict_search(YAMLAccess.tertiary.values(), event[1])
 
+            if primary_found:
+                EventQueueAccess.queue_addition(objective_p[0], objective_p[1], 1)
+
             print(primary_found, objective_p)
 
             # if "HUMAN" in event[0]:
