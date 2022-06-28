@@ -3,6 +3,7 @@
 # This module is for operating system level operations on the Pi, such as shutdowns, reboots etc.
 
 from events.event_queue import EventQueueAccess
+from events.event_types import SHUTDOWN, REBOOT, LED_ON, LED_OFF, LED_FLASH
 
 from time import sleep
 from subprocess import call
@@ -74,15 +75,15 @@ class PiOperations:
         while True:
             event = EventQueueAccess.get_latest_event(["HARDWARE_PI"])
             if event:
-                if event[1] == "SHUTDOWN":
+                if event[1] == SHUTDOWN:
                     self.shutdown()
-                elif event[1] == "REBOOT":
+                elif event[1] == REBOOT:
                     self.reboot()
-                elif event[1] == "LED_ON":
+                elif event[1] == LED_ON:
                     self.led_on()
-                elif event[1] == "LED_OFF":
+                elif event[1] == LED_OFF:
                     self.led_off()
-                elif event[1] == "LED_FLASH":
+                elif event[1] == LED_FLASH:
                     self.led_flash(self.led_flash_default)
             else:
                 sleep(1)
