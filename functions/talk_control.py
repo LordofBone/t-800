@@ -2,6 +2,10 @@ from soran.integrate_stt import run_stt_inference
 
 from Bot_Engine.functions import core_systems
 
+from events.event_queue import EventQueueAccess
+
+from events.event_types import LISTEN_STT
+
 from hardware.pi_operations import *
 
 logger = logging.getLogger("talk-control")
@@ -51,4 +55,28 @@ class TalkController:
         """
 
         if self.bot_response == "shut down":
-            shutdown()
+            EventQueueAccess().add_event(SHUTDOWN)
+
+    def queue_checker(self):
+        """
+        Check the event queue for events
+        :return:
+        """
+        while True:
+            event = EventQueueAccess.get_latest_event(["TALK_SYSTEMS"])
+            if event:
+                if event[1] == LISTEN_STT:
+                    self.listen_stt()
+                # elif event[1] == REBOOT:
+                #     self.reboot()
+                # elif event[1] == LED_ON:
+                #     self.led_on()
+                # elif event[1] == LED_OFF:
+                #     self.led_off()
+                # elif event[1] == LED_FLASH:
+                #     self.led_flash(self.led_flash_default)
+            else:
+                sleep(1)
+
+
+TalkControllerAccess = TalkController()

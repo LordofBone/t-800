@@ -11,7 +11,7 @@ import ml.ml_systems
 from events.event_queue import EventQueueAccess
 from hardware.serial_interfacing import SerialAccess
 from hardware.serial_to_events import serial_getter
-from functions.talk_control import TalkController
+from functions.talk_control import TalkControllerAccess
 from hardware.pi_operations import PiOperationsAccess
 
 import logging
@@ -67,7 +67,8 @@ def start_systems():
 
     sleep(2)
 
-    threading.Thread(target=functions.talk_control.TalkController, daemon=False).start()
+    # Start talk control as a thread
+    threading.Thread(target=TalkControllerAccess.queue_checker, daemon=False).start()
 
     logger.info("Started Talk Controller")
 
