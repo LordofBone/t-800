@@ -53,9 +53,9 @@ class TalkController:
         This function checks if the bot response is a command.
         :return:
         """
-
-        if self.bot_response == "shut down":
-            EventQueueAccess().add_event(SHUTDOWN)
+        pass
+        # if self.bot_response == "shut down":
+        #     EventQueueAccess().add_event(SHUTDOWN)
 
     def queue_checker(self):
         """

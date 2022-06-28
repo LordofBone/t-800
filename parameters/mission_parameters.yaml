@@ -6,7 +6,7 @@
 missions:
   primary:
     1: test_primary|test
-    2: person|talk
+    2: HUMAN|"TALK_SYSTEMS"|"TALK"
     3: STAND_ORD|patrol
   secondary:
     1: test_secondary|test

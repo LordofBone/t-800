@@ -22,7 +22,7 @@ from config.vision_config import *
 from functions.draw_vision import VisionAccess
 from events.event_queue import EventQueueAccess
 from utils.yaml_importer import YAMLAccess
-from functions.mission_parameteriser import mission_check
+from functions.mission_processor_systems import mission_check
 from hardware.camera_control import CameraControlAccess
 
 # Import utilites

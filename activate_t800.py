@@ -6,7 +6,7 @@
 import threading
 from time import sleep
 
-import functions.mission_parameteriser
+from functions.mission_processor_systems import MissionProcessorAccess
 import ml.ml_systems
 from events.event_queue import EventQueueAccess
 from events.event_types import SERIAL_WRITE, SERIAL_TEST
@@ -43,9 +43,10 @@ def start_systems():
     logger.info("Started Pi Operations")
 
     # Start the mission parameteriser parameter getter as a thread
-    threading.Thread(target=functions.mission_parameteriser.get_params, daemon=False).start()
+    threading.Thread(target=MissionProcessorAccess.objective_processor, daemon=False).start()
+    threading.Thread(target=MissionProcessorAccess.get_params, daemon=False).start()
 
-    logger.info("Started Mission Parameteriser")
+    logger.info("Started Mission Processor")
 
     # Start the serial access reader as a thread
     threading.Thread(target=SerialAccess.read_serial, daemon=False).start()
@@ -69,9 +70,9 @@ def start_systems():
     sleep(2)
 
     # Start the mission parameteriser objective processor as a thread
-    threading.Thread(target=functions.mission_parameteriser.objective_processor, daemon=False).start()
+    # threading.Thread(target=functions.mission_parameteriser.objective_processor, daemon=False).start()
 
-    logger.info("Started Mission Parameteriser Objective Processor")
+    # logger.info("Started Mission Parameteriser Objective Processor")
 
     sleep(2)
 
