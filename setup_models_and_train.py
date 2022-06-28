@@ -14,7 +14,7 @@ def download_all_models_do_all_training():
     """
     download_models_soran()
     train_all_sentiment()
-    bot_trainer_8()
+    bot_trainer_8(fresh_db=True)
     download_tensorflow_vision_model()
 
 
