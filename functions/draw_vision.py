@@ -254,10 +254,11 @@ class HKVision:
 
     def wipe_frames(self):
         """
-        This is where the frame is wiped clean
+        This is where the frames are wiped clean to try and save on RAM
         :return:
         """
         del self.frame
+        del self.smaller_img
 
     def clear_vision(self):
         """
