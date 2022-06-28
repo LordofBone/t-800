@@ -6,7 +6,7 @@
 from time import sleep
 
 from events.event_queue import EventQueueAccess, DrawListQueueAccess
-from events.event_types import SERIAL_DRAW
+from events.event_types import SERIAL_DRAW, SERIAL_WRITE, SERIAL_TEST, CHECK_DISTANCE
 from hardware.serial_interfacing import SerialAccess
 
 import logging
@@ -60,8 +60,8 @@ if __name__ == "__main__":
 
     # In actual real-world use the queue is used to ensure prevention of two modules trying to write to the Serial at
     # the same time, this tests that this will work correctly
-    EventQueueAccess.queue_addition("SERIAL_WRITE", 'test_serial', 1)
+    EventQueueAccess.queue_addition(SERIAL_WRITE, SERIAL_TEST, 1)
 
     sleep(2)
 
-    EventQueueAccess.queue_addition("SERIAL_WRITE", 'measure_dist', 1)
+    EventQueueAccess.queue_addition(SERIAL_WRITE, CHECK_DISTANCE, 1)

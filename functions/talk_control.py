@@ -4,7 +4,7 @@ from Bot_Engine.functions import core_systems
 
 from events.event_queue import EventQueueAccess
 
-from events.event_types import LISTEN_STT
+from events.event_types import LISTEN_STT, TALK_SYSTEMS
 
 from hardware.pi_operations import *
 
@@ -63,7 +63,7 @@ class TalkController:
         :return:
         """
         while True:
-            event = EventQueueAccess.get_latest_event(["TALK_SYSTEMS"])
+            event = EventQueueAccess.get_latest_event([TALK_SYSTEMS])
             if event:
                 if event[1] == LISTEN_STT:
                     self.listen_stt()
