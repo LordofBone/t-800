@@ -259,6 +259,7 @@ class HKVision:
         """
         del self.frame
         del self.smaller_img
+        del self.resized_image
 
     def clear_vision(self):
         """
