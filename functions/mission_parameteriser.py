@@ -7,7 +7,8 @@ from time import sleep
 
 from functions.draw_vision import VisionAccess
 from events.event_queue import EventQueueAccess
-from events.event_types import ANY
+from events.event_types import ANY, LISTEN_STT, TERMINATE, PATROL, TALK_SYSTEMS, ACTION_EXECUTE, ACTION_MOVEMENT, \
+    PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD
 from utils.yaml_importer import YAMLAccess, dict_search
 
 import logging
@@ -76,13 +77,13 @@ def get_params(test_mode=False):
         # If standing orders are detected push them into the event queue with the appropriate priority
         if primary_found:
             logger.debug(f'Standing Order: "{objective_p}" found')
-            EventQueueAccess.queue_addition("PRI_MSN:STAND_ORD", objective_p, 1)
+            EventQueueAccess.queue_addition(PRI_MSN_STAND_ORD, objective_p, 1)
         if secondary_found:
             logger.debug(f'Standing Order: "{objective_s}" found')
-            EventQueueAccess.queue_addition("SEC_MSN:STAND_ORD", objective_s, 2)
+            EventQueueAccess.queue_addition(SEC_MSN_STAND_ORD, objective_s, 2)
         if tertiary_found:
             logger.debug(f'Standing Order: "{objective_t}" found')
-            EventQueueAccess.queue_addition("TER_MSN:STAND_ORD", objective_t, 3)
+            EventQueueAccess.queue_addition(TER_MSN_STAND_ORD, objective_t, 3)
         # If test mode is activated then break the loop
         if test_mode:
             break
@@ -110,9 +111,11 @@ def objective_processor():
 
             # Depending on the objective, call the relevant action - unknown objectives are dropped
             if objective == "terminate":
-                EventQueueAccess.queue_addition("ACTION:EXECUTE", "TERMINATE", 1)
+                EventQueueAccess.queue_addition(ACTION_EXECUTE, TERMINATE, 1)
             elif objective == "patrol":
-                EventQueueAccess.queue_addition("ACTION:MOVEMENT", "PATROL", 3)
+                EventQueueAccess.queue_addition(ACTION_MOVEMENT, PATROL, 3)
+            elif objective == "talk":
+                EventQueueAccess.queue_addition(TALK_SYSTEMS, LISTEN_STT, 2)
             else:
                 logger.debug("unknown objective")
 
