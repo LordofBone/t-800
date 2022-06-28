@@ -3,35 +3,43 @@ import board
 from digitalio import DigitalInOut, Direction, Pull
 
 from events.event_queue import EventQueueAccess
-from events.event_types import SHUTDOWN
+from events.event_types import SHUTDOWN, HARDWARE_PI
 
-BUTTON_PIN = board.D17
-JOYDOWN_PIN = board.D27
-JOYLEFT_PIN = board.D22
-JOYUP_PIN = board.D23
-JOYRIGHT_PIN = board.D24
-JOYSELECT_PIN = board.D16
 
-buttons = [BUTTON_PIN, JOYUP_PIN, JOYDOWN_PIN,
-           JOYLEFT_PIN, JOYRIGHT_PIN, JOYSELECT_PIN]
-for i, pin in enumerate(buttons):
-    buttons[i] = DigitalInOut(pin)
-    buttons[i].direction = Direction.INPUT
-    buttons[i].pull = Pull.UP
-button, joyup, joydown, joyleft, joyright, joyselect = buttons
+class InputSystems:
+    def __init__(self):
+        self.BUTTON_PIN = board.D17
+        self.JOYDOWN_PIN = board.D27
+        self.JOYLEFT_PIN = board.D22
+        self.JOYUP_PIN = board.D23
+        self.JOYRIGHT_PIN = board.D24
+        self.JOYSELECT_PIN = board.D16
 
-while True:
-    if not button.value:
-        EventQueueAccess.queue_addition("HARDWARE_PI", SHUTDOWN, 4)
-    if not joyup.value:
-        print("Joystick up")
-    if not joydown.value:
-        print("Joystick down")
-    if not joyleft.value:
-        print("Joystick left")
-    if not joyright.value:
-        print("Joystick right")
-    if not joyselect.value:
-        print("Joystick select")
+        self.buttons = [self.BUTTON_PIN, self.JOYUP_PIN, self.JOYDOWN_PIN,
+                        self.JOYLEFT_PIN, self.JOYRIGHT_PIN, self.JOYSELECT_PIN]
+        for i, pin in enumerate(self.buttons):
+            self.buttons[i] = DigitalInOut(pin)
+            self.buttons[i].direction = Direction.INPUT
+            self.buttons[i].pull = Pull.UP
+        self.button, self.joyup, self.joydown, self.joyleft, self.joyright, self.joyselect = self.buttons
 
-    time.sleep(0.01)
+    def check_inputs(self):
+
+        while True:
+            if not self.button.value:
+                EventQueueAccess.queue_addition(HARDWARE_PI, SHUTDOWN, 4)
+            if not self.joyup.value:
+                print("Joystick up")
+            if not self.joydown.value:
+                print("Joystick down")
+            if not self.joyleft.value:
+                print("Joystick left")
+            if not self.joyright.value:
+                print("Joystick right")
+            if not self.joyselect.value:
+                print("Joystick select")
+
+            time.sleep(0.01)
+
+
+InputSystemsAccess = InputSystems()

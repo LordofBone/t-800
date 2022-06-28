@@ -9,10 +9,12 @@ from time import sleep
 import functions.mission_parameteriser
 import ml.ml_systems
 from events.event_queue import EventQueueAccess
+from events.event_types import SERIAL_WRITE, SERIAL_TEST
 from hardware.serial_interfacing import SerialAccess
 from hardware.serial_to_events import serial_getter
 from functions.talk_control import TalkControllerAccess
 from hardware.pi_operations import PiOperationsAccess
+from hardware.inputs import InputSystemsAccess
 
 import logging
 
@@ -30,9 +32,15 @@ def start_systems():
     Start the ML systems, passing in the commandline arguments for showing vision and storing detections to file
     :return:
     """
+    # Start input checking as a thread
+    threading.Thread(target=InputSystemsAccess.check_inputs, daemon=False).start()
+
+    logger.info("Started Input Checking")
 
     # Start pi hardware operations as a thread
     threading.Thread(target=PiOperationsAccess.queue_checker, daemon=False).start()
+
+    logger.info("Started Pi Operations")
 
     # Start the mission parameteriser parameter getter as a thread
     threading.Thread(target=functions.mission_parameteriser.get_params, daemon=False).start()
@@ -81,7 +89,7 @@ def start_systems():
     # todo: probably needs removing
     sleep(30)
 
-    EventQueueAccess.queue_addition("SERIAL_WRITE", "test_serial", 1)
+    EventQueueAccess.queue_addition(SERIAL_WRITE, SERIAL_TEST, 1)
 
 
 if __name__ == "__main__":
