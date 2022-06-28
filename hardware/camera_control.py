@@ -52,6 +52,9 @@ class CameraControl:
             self.camera.capture(f'{object_detect_images_dir}/{name}_{num}.jpg')
             self.camera.stop_preview()
 
+    def capture_array(self):
+        return self.camera.capture_array("main")
+
 
 CameraControlAccess = CameraControl()
 

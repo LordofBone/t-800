@@ -107,12 +107,13 @@ class HKVision:
         This is where the latest events from the event processor are added in to be drawn
         :return:
         """
+        # todo: figure out why the event type is drawing to screen not the content of the event
         event = DrawListQueueAccess.get_latest_event(ANY)
         if event:
-            if not event == "":
-                self.text_list_event.insert(0, event[1])
-                if len(self.text_list_event) == self.text_max_events:
-                    self.text_list_event.pop(self.text_max_events - 1)
+            # if not event == "":
+            self.text_list_event.insert(0, event[1])
+            if len(self.text_list_event) == self.text_max_events:
+                self.text_list_event.pop(self.text_max_events - 1)
 
     def add_text_list_serial(self):
         """
@@ -250,6 +251,13 @@ class HKVision:
         # Press 'q' to quit
         if self.cv2.waitKey(1) == ord('q'):
             self.clear_vision()
+
+    def wipe_frames(self):
+        """
+        This is where the frame is wiped clean
+        :return:
+        """
+        del self.frame
 
     def clear_vision(self):
         """

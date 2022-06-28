@@ -138,7 +138,7 @@ class ObjectDetector(object):
         :return:
         """
         while True:
-            self.frame1 = CameraControlAccess.camera.capture_array("main")
+            self.frame = CameraControlAccess.capture_array()
 
             self.objects_frame = {}
 
@@ -146,7 +146,6 @@ class ObjectDetector(object):
 
             # Acquire frame and expand frame dimensions to have shape: [1, None, None, 3]
             # i.e. a single-column array, where each item in the column has the pixel RGB value
-            self.frame = np.copy(self.frame1)
             self.frame.setflags(write=True)
             self.frame_rgb = self.cv2.cvtColor(self.frame, self.cv2.COLOR_BGR2RGB)
             self.frame_expanded = np.expand_dims(self.frame_rgb, axis=0)
@@ -255,6 +254,10 @@ class ObjectDetector(object):
             # Truncate the latest capture and delete the frame to save memory
             # CameraControlAccess.rawCapture.truncate(0)
             del self.frame
+            del self.frame_rgb
+            del self.frame_expanded
+
+            VisionAccess.wipe_frames()
 
     def clear_analysis_stream(self):
         """
