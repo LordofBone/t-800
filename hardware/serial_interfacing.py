@@ -107,12 +107,13 @@ class SerialController:
         This will grab the serial writes from the event factory and will write them to the Arduino
         :return:
         """
-        while True:
-            s_write = EventQueueAccess.get_latest_event([SERIAL_WRITE, SERIAL_READ])
-            if not s_write == "":
-                self.write_serial(s_write)
-            else:
-                sleep(1)
+        pass
+        # while True:
+            # s_write = EventQueueAccess.get_latest_event([SERIAL_WRITE, SERIAL_READ])
+            # if not s_write == "":
+            #     self.write_serial(s_write)
+            # else:
+            #     sleep(1)
 
     def write_serial(self, to_write):
         """

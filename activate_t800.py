@@ -88,9 +88,9 @@ def start_systems():
 
     # serial write test
     # todo: probably needs removing
-    sleep(30)
-
-    EventQueueAccess.queue_addition(SERIAL_WRITE, SERIAL_TEST, 1)
+    # sleep(30)
+    #
+    # EventQueueAccess.queue_addition(SERIAL_WRITE, SERIAL_TEST, 1)
 
 
 if __name__ == "__main__":

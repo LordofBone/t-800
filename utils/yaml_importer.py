@@ -25,7 +25,7 @@ def dict_search(values, search_for):
     """
     for k in values:
         if search_for in k:
-            return True, k.split("|")[1]
+            return True, k.split("|")
     return False, "NO_MSN"
 
 
