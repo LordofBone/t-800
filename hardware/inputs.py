@@ -27,7 +27,7 @@ class InputSystems:
 
         while True:
             if not self.button.value:
-                EventQueueAccess.queue_addition(HARDWARE_PI, SHUTDOWN, 4)
+                EventQueueAccess.queue_addition(HARDWARE_PI, SHUTDOWN, 6)
             if not self.joyup.value:
                 print("Joystick up")
             if not self.joydown.value:
