@@ -65,7 +65,7 @@ class TalkController:
         while True:
             event = EventQueueAccess.get_latest_event([TALK_SYSTEMS])
             if event:
-                if event[1] == LISTEN_STT:
+                if event[2] == LISTEN_STT:
                     self.listen_stt()
                 # elif event[1] == REBOOT:
                 #     self.reboot()

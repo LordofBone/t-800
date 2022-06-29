@@ -114,10 +114,10 @@ class MissionProcessor:
         """
         while True:
             # Grab the latest objective from the factory list
-            if test_mode:
-                EventQueueAccess.queue_addition(HUMAN, "test", 4)
+            # if test_mode:
+            #     EventQueueAccess.queue_addition(HUMAN, "test", 4)
 
-            event = EventQueueAccess.get_latest_event(ANY)
+            event = EventQueueAccess.get_latest_event(HUMAN)
 
             if not event:
                 continue
@@ -129,9 +129,10 @@ class MissionProcessor:
             secondary_found, objective_s = dict_search(YAMLAccess.secondary.values(), event[1])
             tertiary_found, objective_t = dict_search(YAMLAccess.tertiary.values(), event[1])
 
-            print(f"objectives from event: {primary_found}, {objective_p}")
+            # print(f"objectives from event: {primary_found}, {objective_p}")
 
             if primary_found:
+                print(f'Primary objective: "{objective_p}" found')
                 EventQueueAccess.queue_addition(objective_p[1], objective_p[2], 1)
 
             # print(primary_found, objective_p)
@@ -156,7 +157,8 @@ class MissionProcessor:
             #         logger.debug("unknown objective")
 
             # Wait for a period of time as defined in mission_parameters.yaml before processing next objective
-            sleep(YAMLAccess.OBJ_PROCESS)
+            sleep(1)
+            # sleep(YAMLAccess.OBJ_PROCESS)
 
 
 MissionProcessorAccess = MissionProcessor()
