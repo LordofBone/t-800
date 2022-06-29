@@ -22,7 +22,7 @@ def serial_getter():
     while True:
         serial_in = SerialAccess.get_serial_list()
         # If serial output is present then process it, otherwise skip
-        if not serial_in == "" or "NO_SERIAL":
+        if not serial_in == "" or not serial_in == "NO_SERIAL":
             logger.debug(serial_in)
 
             # Sent the serial outputs into the event factory's serial receiver list for processing
