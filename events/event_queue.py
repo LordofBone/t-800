@@ -55,10 +55,12 @@ class EventQueue:
         This is a test function to test the event queue
         :return:
         """
+        test_event_1 = "EVENT_TYPE_1"
         while True:
-            event = self.get_latest_event(["EVENT_TYPE_1"])
+            event = self.get_latest_event([test_event_1])
             if event:
-                print(event)
+                if event[2] == "BASIC TEST 2":
+                    print(f"Detected {event[2]} with event type {test_event_1}")
 
             sleep(1)
 
@@ -67,10 +69,12 @@ class EventQueue:
         This is a test function to test the event queue
         :return:
         """
+        test_event_2 = "EVENT_TYPE_2"
         while True:
-            event = self.get_latest_event(["EVENT_TYPE_2"])
+            event = self.get_latest_event(test_event_2)
             if event:
-                print(event)
+                if event[2] == "BASIC TEST 1":
+                    print(f"Detected {event[2]} with event type {test_event_2}")
 
             sleep(1)
 
