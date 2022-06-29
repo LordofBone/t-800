@@ -108,9 +108,8 @@ class HKVision:
         :return:
         """
         # todo: figure out why the event type is drawing to screen not the content of the event
-        event = DrawListQueueAccess.get_latest_event(ANY)
+        event = DrawListQueueAccess.get_latest_event(ANY.pop(SERIAL_DRAW))
         if event:
-            # if not event == "":
             self.text_list_event.insert(0, event[1])
             if len(self.text_list_event) == self.text_max_events:
                 self.text_list_event.pop(self.text_max_events - 1)
