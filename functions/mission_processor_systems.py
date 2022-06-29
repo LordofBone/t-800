@@ -119,16 +119,22 @@ class MissionProcessor:
 
             event = EventQueueAccess.get_latest_event(ANY)
 
-            print(event)
+            if not event:
+                continue
+
+            print(f"event: {event}")
+
 
             primary_found, objective_p = dict_search(YAMLAccess.primary.values(), event[1])
             secondary_found, objective_s = dict_search(YAMLAccess.secondary.values(), event[1])
             tertiary_found, objective_t = dict_search(YAMLAccess.tertiary.values(), event[1])
 
-            if primary_found:
-                EventQueueAccess.queue_addition(objective_p[0], objective_p[1], 1)
+            print(f"objectives from event: {primary_found}, {objective_p}")
 
-            print(primary_found, objective_p)
+            if primary_found:
+                EventQueueAccess.queue_addition(objective_p[1], objective_p[2], 1)
+
+            # print(primary_found, objective_p)
 
             # if "HUMAN" in event[0]:
             #     detail = event[0].split(":")
