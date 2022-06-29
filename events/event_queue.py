@@ -16,6 +16,18 @@ import logging
 logger = logging.getLogger("event-queue")
 
 
+def queue_adder(event_type, event_content, priority):
+    """
+    This function is to add events to the event queue, but also the separate draw queue for drawing events
+    :param event_type: the type of event to add to the queue
+    :param event_content: the content of the event to add to the queue
+    :param priority: the priority of the event to add to the queue
+    :return:
+    """
+    EventQueueAccess.queue_addition(event_type, event_content, priority)
+    DrawListQueueAccess.queue_addition(event_type, event_content, priority)
+
+
 # todo: determine whether this needs to be a dataclass
 class EventQueue:
     def __init__(self):

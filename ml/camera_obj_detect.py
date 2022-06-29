@@ -20,7 +20,7 @@ from six.moves import range
 from config.vision_config import *
 
 from functions.draw_vision import VisionAccess
-from events.event_queue import EventQueueAccess
+from events.event_queue import queue_adder
 from utils.yaml_importer import YAMLAccess
 from functions.mission_processor_systems import MissionProcessorAccess
 from hardware.camera_control import CameraControlAccess
@@ -224,9 +224,9 @@ class ObjectDetector(object):
                         # ID as human and pass into event queue, for anything else pass in 'object' and the name of
                         # the detection
                         if name_split == "person":
-                            EventQueueAccess.queue_addition("HUMAN", display_str_out, 4)
+                            queue_adder("HUMAN", display_str_out, 4)
                         else:
-                            EventQueueAccess.queue_addition("OBJECT", display_str_out, 5)
+                            queue_adder("OBJECT", display_str_out, 5)
                         # Delete the cropped image to save memory
                         del crop_img
 

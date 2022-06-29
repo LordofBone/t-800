@@ -6,7 +6,7 @@
 from time import sleep
 
 from functions.draw_vision import VisionAccess
-from events.event_queue import EventQueueAccess
+from events.event_queue import EventQueueAccess, queue_adder
 from events.event_types import ANY, LISTEN_STT, TERMINATE, PATROL, TALK_SYSTEMS, ACTION_EXECUTE, ACTION_MOVEMENT, \
     PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD, TALK, HUMAN
 from utils.yaml_importer import YAMLAccess, dict_search
@@ -129,7 +129,7 @@ class MissionProcessor:
             # print(f"objectives from event: {primary_found}, {objective_p}")
 
             if primary_found:
-                EventQueueAccess.queue_addition(objective_p[1], objective_p[2], 1)
+                queue_adder(objective_p[1], objective_p[2], 1)
 
             # print(primary_found, objective_p)
 

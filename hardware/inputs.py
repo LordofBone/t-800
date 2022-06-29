@@ -2,7 +2,7 @@ import time
 import board
 from digitalio import DigitalInOut, Direction, Pull
 
-from events.event_queue import EventQueueAccess
+from events.event_queue import queue_adder
 from events.event_types import SHUTDOWN, HARDWARE_PI
 
 
@@ -27,7 +27,7 @@ class InputSystems:
 
         while True:
             if not self.button.value:
-                EventQueueAccess.queue_addition(HARDWARE_PI, SHUTDOWN, 6)
+                queue_adder(HARDWARE_PI, SHUTDOWN, 6)
             if not self.joyup.value:
                 print("Joystick up")
             if not self.joydown.value:

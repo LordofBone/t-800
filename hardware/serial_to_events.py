@@ -5,7 +5,7 @@
 
 from time import sleep
 
-from events.event_queue import EventQueueAccess, DrawListQueueAccess
+from events.event_queue import DrawListQueueAccess, queue_adder
 from events.event_types import SERIAL_DRAW, SERIAL_WRITE, SERIAL_TEST, CHECK_DISTANCE
 from hardware.serial_interfacing import SerialAccess
 
@@ -32,7 +32,7 @@ def serial_getter():
             # todo: add in more
             #  actions here from Arduino outputs, such as movement locks while the Arduino is moving motors etc.
             if serial_in == "SUCCESS!":
-                EventQueueAccess.queue_addition("TEST_EVENT", "SERIAL_TEST", 1)
+                queue_adder("TEST_EVENT", "SERIAL_TEST", 1)
             # todo: need to review whether the below is really needed, it was made to lock movements to prevent
             #  multiple movements at once, but it just seemed to spam the serial writing to the point where other
             #  things like firing plasma would not work, seems to work fine without this so far
@@ -49,8 +49,6 @@ if __name__ == "__main__":
     # Run a test by writing some commands and checking that the responses are processed by the event queue/event factory
     import threading
 
-    threading.Thread(target=EventQueueAccess.event_spout, daemon=False).start()
-
     threading.Thread(target=SerialAccess.read_serial, daemon=False).start()
     sleep(2)
 
@@ -60,8 +58,8 @@ if __name__ == "__main__":
 
     # In actual real-world use the queue is used to ensure prevention of two modules trying to write to the Serial at
     # the same time, this tests that this will work correctly
-    EventQueueAccess.queue_addition(SERIAL_WRITE, SERIAL_TEST, 1)
+    queue_adder(SERIAL_WRITE, SERIAL_TEST, 1)
 
     sleep(2)
 
-    EventQueueAccess.queue_addition(SERIAL_WRITE, CHECK_DISTANCE, 1)
+    queue_adder(SERIAL_WRITE, CHECK_DISTANCE, 1)
