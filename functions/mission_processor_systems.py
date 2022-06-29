@@ -122,9 +122,6 @@ class MissionProcessor:
             if not event:
                 continue
 
-            print(f"event: {event}")
-
-
             primary_found, objective_p = dict_search(YAMLAccess.primary.values(), event[1])
             secondary_found, objective_s = dict_search(YAMLAccess.secondary.values(), event[1])
             tertiary_found, objective_t = dict_search(YAMLAccess.tertiary.values(), event[1])
@@ -132,7 +129,6 @@ class MissionProcessor:
             # print(f"objectives from event: {primary_found}, {objective_p}")
 
             if primary_found:
-                print(f'Primary objective: "{objective_p}" found')
                 EventQueueAccess.queue_addition(objective_p[1], objective_p[2], 1)
 
             # print(primary_found, objective_p)
