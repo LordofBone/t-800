@@ -44,10 +44,13 @@ class EventQueue:
         :return:
         """
         self.event_out = self.priority_queue.get()
-        if self.event_out[1] in event_match:
-            return self.event_out
-        else:
-            self.priority_queue.put(self.event_out)
+        try:
+            if self.event_out[1] in event_match:
+                return self.event_out
+            else:
+                self.priority_queue.put(self.event_out)
+                return None
+        except TypeError:
             return None
 
     def event_tester_1(self):
