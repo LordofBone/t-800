@@ -60,6 +60,7 @@ class HKVision:
     overlay_count: int = 0
     show_smaller_img: bool = False
     smaller_image_scale: int = 4
+    ANY_NO_SERIAL_DRAW = ANY.remove(SERIAL_DRAW)
 
     def add_frame(self, frame, frame_rate_calc):
         """
@@ -108,7 +109,7 @@ class HKVision:
         :return:
         """
         # todo: figure out why the event type is drawing to screen not the content of the event
-        event = DrawListQueueAccess.get_latest_event(ANY.remove(SERIAL_DRAW))
+        event = DrawListQueueAccess.get_latest_event(self.ANY_NO_SERIAL_DRAW)
         if event:
             self.text_list_event.insert(0, event[1])
             if len(self.text_list_event) == self.text_max_events:
