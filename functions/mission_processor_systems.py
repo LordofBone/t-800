@@ -70,10 +70,6 @@ class MissionProcessor:
             self.secondary_objectives = YAMLAccess.secondary
             self.tertiary_objectives = YAMLAccess.tertiary
 
-            print(self.primary_objectives)
-            print(self.secondary_objectives)
-            print(self.tertiary_objectives)
-
             # Print them for debug/testing
             logger.debug(VisionAccess.text_list_params_primary)
 
