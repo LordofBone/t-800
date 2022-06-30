@@ -60,7 +60,8 @@ class HKVision:
     overlay_count: int = 0
     show_smaller_img: bool = False
     smaller_image_scale: int = 4
-    ANY_NO_SERIAL_DRAW = ANY.remove(SERIAL_DRAW)
+    ANY_NO_SERIAL_DRAW = ANY
+    ANY_NO_SERIAL_DRAW.remove(SERIAL_DRAW)
 
     def add_frame(self, frame, frame_rate_calc):
         """
@@ -111,7 +112,7 @@ class HKVision:
         # todo: figure out why the event type is drawing to screen not the content of the event
         event = DrawListQueueAccess.get_latest_event(self.ANY_NO_SERIAL_DRAW)
         if event:
-            self.text_list_event.insert(0, event[1])
+            self.text_list_event.insert(0, event[2])
             if len(self.text_list_event) == self.text_max_events:
                 self.text_list_event.pop(self.text_max_events - 1)
 
@@ -120,9 +121,10 @@ class HKVision:
         This is where the latest serial data from the serial interface is added in to be drawn
         :return:
         """
+        pass
         event = DrawListQueueAccess.get_latest_event([SERIAL_DRAW])
         if event:
-            self.text_list_serial.insert(0, event[1])
+            self.text_list_serial.insert(0, event[2])
             if len(self.text_list_serial) == self.text_max_serial:
                 self.text_list_serial.pop(self.text_max_serial - 1)
 
