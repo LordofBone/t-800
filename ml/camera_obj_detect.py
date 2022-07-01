@@ -23,7 +23,6 @@ from functions.draw_vision import VisionAccess
 from events.event_queue import queue_adder
 from events.event_types import HUMAN, OBJECT
 from utils.yaml_importer import YAMLAccess
-from functions.mission_processor_systems import MissionProcessorAccess
 from hardware.camera_control import CameraControlAccess
 
 # Import utilites
@@ -192,38 +191,8 @@ class ObjectDetector(object):
                         # Split the detection string to get the name of the detection
                         name_split = display_str_out.split(":")[0]
 
-                        # Run the detection name into the mission parameters to check for mission objectives based on
-                        # said detection and return booleans for primary, secondary and tertiary detections - along
-                        # with their objectives for the detections
-                        # (primary_found, secondary_found, tertiary_found), (objective_p, objective_s, objective_t) = \
-                        #     mission_check(name_split)
+                        VisionAccess.add_sub_image(crop_img, right, bottom)
 
-                        objective_p, objective_s, objective_t = MissionProcessorAccess.primary_objectives, MissionProcessorAccess.secondary_objectives, MissionProcessorAccess.tertiary_objectives
-
-                        # MissionProcessorAccess
-
-                        # logger.debug((primary_found, secondary_found, tertiary_found))
-                        logger.debug((objective_p, objective_s, objective_t))
-
-                        # If mission objectives are found for the detection then display the cropped image of the
-                        # detection along with the mame and objective.
-
-                        # todo: look into making this a little more
-                        #  advanced as at the moment it will just overlay the most recent mission detection and if
-                        #  multiple levels of missions are found; for instance primary and secondary, only the most
-                        #  recent will be over-layed (although both should be executed into the queue and processed)
-                        # if primary_found:
-                        VisionAccess.overlay_frame(crop_img, right, bottom, "IDENT POSITIVE", name_split,
-                                                   str(objective_p), 20)
-                        # if secondary_found:
-                        VisionAccess.overlay_frame(crop_img, right, bottom, "IDENT POSITIVE", name_split,
-                                                   str(objective_s), 20)
-                        # if tertiary_found:
-                        VisionAccess.overlay_frame(crop_img, right, bottom, "IDENT POSITIVE", name_split,
-                                                   str(objective_t), 20)
-                        # If no mission-specific detections are found process other detections for 'person',
-                        # ID as human and pass into event queue, for anything else pass in 'object' and the name of
-                        # the detection
                         if name_split == "person":
                             queue_adder(HUMAN, display_str_out, 4)
                         else:

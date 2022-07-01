@@ -6,9 +6,9 @@
 from time import sleep
 
 from functions.draw_vision import VisionAccess
-from events.event_queue import EventQueueAccess, queue_adder
+from events.event_queue import EventQueueAccess, DrawListQueueAccess, queue_adder
 from events.event_types import ANY, LISTEN_STT, TERMINATE, PATROL, TALK_SYSTEMS, ACTION_EXECUTE, ACTION_MOVEMENT, \
-    PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD, TALK, HUMAN
+    PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD, TALK, HUMAN, PRIMARY, SECONDARY, TERTIARY, OVERLAY_DRAW
 from utils.yaml_importer import YAMLAccess, dict_search
 
 import logging
@@ -126,6 +126,13 @@ class MissionProcessor:
 
             if primary_found:
                 queue_adder(objective_p[1], objective_p[2], 1)
+                DrawListQueueAccess.queue_addition(OVERLAY_DRAW, [PRIMARY, event[1], objective_p[2]], 1)
+            elif secondary_found:
+                queue_adder(objective_s[1], objective_s[2], 2)
+                DrawListQueueAccess.queue_addition(OVERLAY_DRAW, [SECONDARY, event[1], objective_s[2]], 2)
+            elif tertiary_found:
+                queue_adder(objective_t[1], objective_t[2], 3)
+                DrawListQueueAccess.queue_addition(OVERLAY_DRAW, [TERTIARY, event[1], tertiary_found[2]], 3)
 
             # print(primary_found, objective_p)
 

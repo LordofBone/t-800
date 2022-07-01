@@ -11,7 +11,7 @@ import numpy as np
 from hardware.serial_interfacing import SerialAccess
 
 from events.event_queue import DrawListQueueAccess
-from events.event_types import SERIAL_DRAW, ANY
+from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE
 
 from config.vision_config import *
 
@@ -73,12 +73,21 @@ class HKVision:
         self.frame = frame
         self.frame_rate_calc = frame_rate_calc
 
-    def overlay_frame(self, image, image_x, image_y, overlay_text, overlay_text_2, overlay_text_3, time):
+    def add_sub_image(self, image, image_x, image_y):
         """
-        This is where the overlay image is drawn onto the frame
+        This is where a cropped image is added to the frame for overlaying
         :param image:
         :param image_x:
         :param image_y:
+        :return:
+        """
+        self.cropped_image = image
+        self.smaller_img_x = image_x
+        self.smaller_img_y = image_y
+
+    def overlay_frame(self, overlay_text, overlay_text_2, overlay_text_3, time):
+        """
+        This is where the overlay image is drawn onto the frame
         :param overlay_text:
         :param overlay_text_2:
         :param overlay_text_3:
@@ -86,9 +95,6 @@ class HKVision:
         :return:
         """
         if not self.show_smaller_img:
-            self.smaller_img = image
-            self.smaller_img_x = image_x
-            self.smaller_img_y = image_y
             self.overlay_text = overlay_text.upper()
             self.overlay_text_2 = 'TARGET: {}'.format(overlay_text_2.upper())
             self.overlay_text_3 = overlay_text_3.upper()
@@ -96,7 +102,7 @@ class HKVision:
             self.show_smaller_img = True
 
             # Resize image down
-            self.resized_image = cv2.resize(self.smaller_img, (
+            self.resized_image = cv2.resize(self.cropped_image, (
                 int(self.smaller_img_y / self.smaller_image_scale), int(self.smaller_img_x / self.smaller_image_scale)))
 
             # Draw text into the smaller resized image
@@ -190,6 +196,17 @@ class HKVision:
         This is where the vision data is drawn onto the frame
         :return:
         """
+        event = DrawListQueueAccess.get_latest_event([OVERLAY_DRAW])
+
+        if event:
+            print(event)
+            if event[2][0] == PRIMARY:
+                self.overlay_frame(IDENT_POSITIVE, event[2], event[2][2], 20)
+            elif event[2][0] == SECONDARY:
+                self.overlay_frame(IDENT_POSITIVE, event[2], event[2][2], 20)
+            elif event[2][0] == TERTIARY:
+                self.overlay_frame(IDENT_POSITIVE, event[2], event[2][2], 20)
+
         # Get latest events
         self.add_text_list_event()
 
