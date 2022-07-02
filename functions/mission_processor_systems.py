@@ -103,16 +103,12 @@ class MissionProcessor:
     # This function processes objectives from the event factory and pushes them into actions This is put here outside of
     # the event factory so that it can be threaded seperately, so the event factory won't stop while it is waiting for
     # actions to complete
-    def objective_processor(self, test_mode=False):
+    def objective_processor(self):
         """
         This function processes objectives from the event factory and pushes them into actions
         :return:
         """
         while True:
-            # Grab the latest objective from the factory list
-            # if test_mode:
-            #     EventQueueAccess.queue_addition(HUMAN, "test", 4)
-
             event = EventQueueAccess.get_latest_event(HUMAN)
 
             if not event:
@@ -122,17 +118,15 @@ class MissionProcessor:
             secondary_found, objective_s = dict_search(YAMLAccess.secondary.values(), event[1])
             tertiary_found, objective_t = dict_search(YAMLAccess.tertiary.values(), event[1])
 
-            # print(f"objectives from event: {primary_found}, {objective_p}")
-
             if primary_found:
                 queue_adder(objective_p[1], objective_p[2], 1)
-                DrawListQueueAccess.queue_addition(OVERLAY_DRAW, [PRIMARY, event[1], objective_p[2]], 1)
+                DrawListQueueAccess.queue_addition(OVERLAY_DRAW, f"{PRIMARY}|{event[1]}|{objective_p[2]}", 1)
             elif secondary_found:
                 queue_adder(objective_s[1], objective_s[2], 2)
-                DrawListQueueAccess.queue_addition(OVERLAY_DRAW, [SECONDARY, event[1], objective_s[2]], 2)
+                DrawListQueueAccess.queue_addition(OVERLAY_DRAW, f"{SECONDARY}|{event[1]}|{objective_s[2]}", 2)
             elif tertiary_found:
                 queue_adder(objective_t[1], objective_t[2], 3)
-                DrawListQueueAccess.queue_addition(OVERLAY_DRAW, [TERTIARY, event[1], tertiary_found[2]], 3)
+                DrawListQueueAccess.queue_addition(OVERLAY_DRAW, f"{TERTIARY}|{event[1]}|{tertiary_found[2]}", 3)
 
             # print(primary_found, objective_p)
 
