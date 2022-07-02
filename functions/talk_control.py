@@ -1,10 +1,10 @@
-from soran.integrate_stt import run_stt_inference
+from soran.integrate_stt import SpeechtoTextHandler
 
 from Bot_Engine.functions import core_systems
 
 from events.event_queue import EventQueueAccess, DrawListQueueAccess
 
-from events.event_types import LISTEN_STT, TALK_SYSTEMS, OVERLAY_DRAW, LISTENING, STOPPED_LISTENING
+from events.event_types import LISTEN_STT, TALK_SYSTEMS, OVERLAY_DRAW, LISTENING, STOPPED_LISTENING, INFERENCING_SPEECH, STOPPED_INFERENCING_SPEECH
 
 from hardware.pi_operations import *
 
@@ -19,6 +19,8 @@ class TalkController:
         This is the main class that runs the STT and bot interaction.
         """
         self.bot_control = BotControl
+
+        self.STT_handler = SpeechtoTextHandler()
 
         self.inference_output = None
 
@@ -40,9 +42,15 @@ class TalkController:
         """
         DrawListQueueAccess.queue_addition(OVERLAY_DRAW, LISTENING, 1)
 
-        self.inference_output = run_stt_inference()
+        self.STT_handler.initiate_recording()
 
         DrawListQueueAccess.queue_addition(OVERLAY_DRAW, STOPPED_LISTENING, 1)
+
+        DrawListQueueAccess.queue_addition(OVERLAY_DRAW, INFERENCING_SPEECH, 1)
+
+        self.inference_output = self.STT_handler.run_inference()
+
+        DrawListQueueAccess.queue_addition(OVERLAY_DRAW, STOPPED_INFERENCING_SPEECH, 1)
 
         logger.debug(self.inference_output)
 

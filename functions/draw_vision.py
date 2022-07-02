@@ -11,7 +11,7 @@ import numpy as np
 from hardware.serial_interfacing import SerialAccess
 
 from events.event_queue import DrawListQueueAccess
-from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE, LISTENING, STOPPED_LISTENING
+from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE, LISTENING, STOPPED_LISTENING, INFERENCING_SPEECH, STOPPED_INFERENCING_SPEECH
 
 from config.vision_config import *
 
@@ -60,6 +60,7 @@ class HKVision:
     overlay_count: int = 0
     show_smaller_img: bool = False
     centre_text: bool = False
+    centre_text_content = str
     smaller_image_scale: int = 4
     ANY_NO_SERIAL_DRAW = ANY
     ANY_NO_SERIAL_DRAW.remove(SERIAL_DRAW)
@@ -218,7 +219,6 @@ class HKVision:
         event = DrawListQueueAccess.get_latest_event([OVERLAY_DRAW])
 
         if event:
-            print(event)
             split_event_details = event[2].split("|")
 
             if split_event_details[0] == PRIMARY:
@@ -227,13 +227,23 @@ class HKVision:
                 self.overlay_frame(IDENT_POSITIVE, split_event_details[1], split_event_details[2], 20)
             elif split_event_details[0] == TERTIARY:
                 self.overlay_frame(IDENT_POSITIVE, split_event_details[1], split_event_details[2], 20)
-            print(split_event_details[0])
+
             if split_event_details[0] == LISTENING:
+                self.centre_text_content = "LISTENING"
                 if not self.centre_text:
                     self.centre_text = True
             elif split_event_details[0] == STOPPED_LISTENING:
+                self.centre_text_content = ""
                 if self.centre_text:
-                    print("stopped listening")
+                    self.centre_text = False
+
+            if split_event_details[0] == INFERENCING_SPEECH:
+                self.centre_text_content = "INFERENCING SPEECH"
+                if not self.centre_text:
+                    self.centre_text = True
+            elif split_event_details[0] == STOPPED_INFERENCING_SPEECH:
+                self.centre_text_content = ""
+                if self.centre_text:
                     self.centre_text = False
 
         # Get latest events
@@ -243,7 +253,7 @@ class HKVision:
         self.add_text_list_serial()
 
         if self.centre_text:
-            self.draw_text(self.font_size, "Listening", int(self.frame_x / 2 - 50), int(self.frame_y / 2 - 50))
+            self.draw_text(self.font_size, self.centre_text_content, int(self.frame_x / 2 - 50), int(self.frame_y / 2 - 50))
 
         # Display a picture of the acquired target within the main vision
         if self.show_smaller_img:
