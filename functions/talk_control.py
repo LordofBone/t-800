@@ -2,9 +2,9 @@ from soran.integrate_stt import run_stt_inference
 
 from Bot_Engine.functions import core_systems
 
-from events.event_queue import EventQueueAccess
+from events.event_queue import EventQueueAccess, DrawListQueueAccess
 
-from events.event_types import LISTEN_STT, TALK_SYSTEMS
+from events.event_types import LISTEN_STT, TALK_SYSTEMS, OVERLAY_DRAW, LISTENING, STOPPED_LISTENING
 
 from hardware.pi_operations import *
 
@@ -38,7 +38,11 @@ class TalkController:
         This is the main function that runs the STT and bot interaction.
         :return:
         """
+        DrawListQueueAccess.queue_addition(OVERLAY_DRAW, LISTENING, 1)
+
         self.inference_output = run_stt_inference()
+
+        DrawListQueueAccess.queue_addition(OVERLAY_DRAW, STOPPED_LISTENING, 1)
 
         logger.debug(self.inference_output)
 
