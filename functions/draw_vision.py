@@ -11,7 +11,7 @@ import numpy as np
 from hardware.serial_interfacing import SerialAccess
 
 from events.event_queue import DrawListQueueAccess
-from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE
+from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE, LISTENING, STOPPED_LISTENING
 
 from config.vision_config import *
 
@@ -59,9 +59,11 @@ class HKVision:
     overlay_time: int = 5
     overlay_count: int = 0
     show_smaller_img: bool = False
+    centre_text: bool = False
     smaller_image_scale: int = 4
     ANY_NO_SERIAL_DRAW = ANY
     ANY_NO_SERIAL_DRAW.remove(SERIAL_DRAW)
+    ANY_NO_SERIAL_DRAW.remove(OVERLAY_DRAW)
 
     def add_frame(self, frame, frame_rate_calc):
         """
@@ -106,9 +108,9 @@ class HKVision:
                 int(self.smaller_img_y / self.smaller_image_scale), int(self.smaller_img_x / self.smaller_image_scale)))
 
             # Draw text into the smaller resized image
-            self.draw_text(self.resized_image, 1, self.overlay_text, 5, 15)
-            self.draw_text(self.resized_image, 1, self.overlay_text_2, 5, 35)
-            self.draw_text(self.resized_image, 1, self.overlay_text_3, 5, 55)
+            self.draw_text_resized(1, self.overlay_text, 5, 15)
+            self.draw_text_resized(1, self.overlay_text_2, 5, 35)
+            self.draw_text_resized(1, self.overlay_text_3, 5, 55)
 
     def add_text_list_event(self):
         """
@@ -161,11 +163,10 @@ class HKVision:
         self.text_list_params_secondary = secondary
         self.text_list_params_tertiary = tertiary
 
-    def draw_text(self, frame_in, font_size, text_d="no_fps_data", text_x=15, text_y=30, text_r=255, text_g=255,
+    def draw_text(self, font_size, text_d="no_fps_data", text_x=15, text_y=30, text_r=255, text_g=255,
                   text_b=255):
         """
         This is where the text is drawn onto the frame
-        :param frame_in:
         :param font_size:
         :param text_d:
         :param text_x:
@@ -175,7 +176,25 @@ class HKVision:
         :param text_b:
         :return:
         """
-        self.cv2.putText(frame_in, text_d, (text_x, text_y), self.font, font_size, (text_b, text_g, text_r),
+        self.cv2.putText(self.frame, text_d, (text_x, text_y), self.font, font_size, (text_b, text_g, text_r),
+                         self.font_thickness,
+                         self.cv2.LINE_AA)
+
+    def draw_text_resized(self, font_size, text_d="no_fps_data", text_x=15, text_y=30, text_r=255, text_g=255,
+                  text_b=255):
+        """
+        This is where the text is drawn onto a cropped frame
+        :param self:
+        :param font_size:
+        :param text_d:
+        :param text_x:
+        :param text_y:
+        :param text_r:
+        :param text_g:
+        :param text_b:
+        :return:
+        """
+        self.cv2.putText(self.resized_image, text_d, (text_x, text_y), self.font, font_size, (text_b, text_g, text_r),
                          self.font_thickness,
                          self.cv2.LINE_AA)
 
@@ -188,7 +207,7 @@ class HKVision:
         :return:
         """
         for i in range(0, self.text_max_events, 1):
-            self.draw_text(self.frame, self.font_size, get_list_item(i, in_list), x_start, y_start)
+            self.draw_text(self.font_size, get_list_item(i, in_list), x_start, y_start)
             y_start += 25
 
     def draw_vision(self):
@@ -200,18 +219,31 @@ class HKVision:
 
         if event:
             print(event)
-            if event[2][0] == PRIMARY:
-                self.overlay_frame(IDENT_POSITIVE, event[2], event[2][2], 20)
-            elif event[2][0] == SECONDARY:
-                self.overlay_frame(IDENT_POSITIVE, event[2], event[2][2], 20)
-            elif event[2][0] == TERTIARY:
-                self.overlay_frame(IDENT_POSITIVE, event[2], event[2][2], 20)
+            split_event_details = event[2].split("|")
+
+            if split_event_details[0] == PRIMARY:
+                self.overlay_frame(IDENT_POSITIVE, split_event_details[1], split_event_details[2], 20)
+            elif split_event_details[0] == SECONDARY:
+                self.overlay_frame(IDENT_POSITIVE, split_event_details[1], split_event_details[2], 20)
+            elif split_event_details[0] == TERTIARY:
+                self.overlay_frame(IDENT_POSITIVE, split_event_details[1], split_event_details[2], 20)
+            print(split_event_details[0])
+            if split_event_details[0] == LISTENING:
+                if not self.centre_text:
+                    self.centre_text = True
+            elif split_event_details[0] == STOPPED_LISTENING:
+                if self.centre_text:
+                    print("stopped listening")
+                    self.centre_text = False
 
         # Get latest events
         self.add_text_list_event()
 
         # Get latest serial outputs
         self.add_text_list_serial()
+
+        if self.centre_text:
+            self.draw_text(self.font_size, "Listening", int(self.frame_x / 2 - 50), int(self.frame_y / 2 - 50))
 
         # Display a picture of the acquired target within the main vision
         if self.show_smaller_img:
@@ -223,26 +255,26 @@ class HKVision:
                 self.show_smaller_img = False
 
         # Draw FPS
-        self.draw_text(self.frame, self.font_size, "FPS={0:.2f}".format(self.frame_rate_calc),
+        self.draw_text(self.font_size, "FPS={0:.2f}".format(self.frame_rate_calc),
                        self.frame_x - int(self.frame_x * .98),
                        self.frame_y - int(self.frame_y * .98))
 
         # Draw resolution of camera
-        self.draw_text(self.frame, self.font_size,
+        self.draw_text(self.font_size,
                        "RES_X={} RES_Y={}".format(resolution_x, resolution_y),
                        self.frame_x - int(self.frame_x * .60))
 
         # Draw confidence threshold
-        self.draw_text(self.frame, self.font_size, "CONF_THRESH={}".format(CONF_THRESHOLD),
+        self.draw_text(self.font_size, "CONF_THRESH={}".format(CONF_THRESHOLD),
                        self.frame_x - int(self.frame_x * .88))
 
         # If serial access is on (Arduino plugged-in and ON) then draw latest serial outputs
         # If serial is OFF then display this
         if SerialAccess.serial_on:
-            self.draw_text(self.frame, self.font_size, "SERIAL_READS:",
+            self.draw_text( self.font_size, "SERIAL_READS:",
                            self.frame_x - int(self.frame_x * .22))
         else:
-            self.draw_text(self.frame, self.font_size, "NO_SERIAL_DEVICE",
+            self.draw_text(self.font_size, "NO_SERIAL_DEVICE",
                            self.frame_x - int(self.frame_x * .22))
 
         # Draw events to screen
@@ -252,7 +284,7 @@ class HKVision:
         self.draw_list(self.text_list_serial, self.frame_x - int(self.frame_x * .20))
 
         # Draw mission parameters
-        self.draw_text(self.frame, self.font_size, "MISSION_PARAMS:", self.frame_x - int(self.frame_x * .22),
+        self.draw_text(self.font_size, "MISSION_PARAMS:", self.frame_x - int(self.frame_x * .22),
                        self.frame_y - int(self.frame_y * .47))
 
         self.draw_list(self.text_list_params_primary, self.frame_x - int(self.frame_x * .20),
