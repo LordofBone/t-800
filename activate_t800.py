@@ -6,6 +6,17 @@
 import threading
 from time import sleep
 
+import os
+import sys
+
+bot_engine_dir = os.path.join(os.path.dirname(__file__), 'Bot_Engine')
+chatbot_dir = os.path.join(os.path.dirname(__file__), bot_engine_dir, 'Chatbot_8')
+soran_dir = os.path.join(os.path.dirname(__file__), 'soran')
+
+sys.path.append(bot_engine_dir)
+sys.path.append(chatbot_dir)
+sys.path.append(soran_dir)
+
 from functions.mission_processor_systems import MissionProcessorAccess
 import ml.ml_systems
 from events.event_queue import EventQueueAccess

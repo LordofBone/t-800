@@ -34,5 +34,4 @@ def download_and_unzip_model():
 
 
 if __name__ == "__main__":
-    # download_and_unzip_model_code()
     download_and_unzip_model()
