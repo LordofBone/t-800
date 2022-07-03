@@ -37,12 +37,12 @@ class TalkController:
         """
         self.interrupt = True
 
-    def speak_tts(self, text_in):
+    def speak_tts(self):
         """
         This function is used to speak the bot response.
         :return:
         """
-        VoiceControllerAccess.tts(text_in)
+        VoiceControllerAccess.tts(self.bot_response)
 
     def listen_stt(self):
         """
@@ -89,7 +89,8 @@ class TalkController:
                     self.get_bot_engine_response()
                 elif split_event_details[0] == REPEAT_INPUT_TTS:
                     self.listen_stt()
-                    self.speak_tts(self.inference_output)
+                    self.bot_response = self.inference_output
+                    self.speak_tts()
             else:
                 sleep(1)
 
