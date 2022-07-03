@@ -4,7 +4,7 @@ from Bot_Engine.functions import core_systems
 
 from events.event_queue import EventQueueAccess, DrawListQueueAccess
 
-from events.event_types import LISTEN_STT, TALK_SYSTEMS, OVERLAY_DRAW, LISTENING, STOPPED_LISTENING, INFERENCING_SPEECH, STOPPED_INFERENCING_SPEECH
+from events.event_types import LISTEN_STT, TALK_SYSTEMS, OVERLAY_DRAW, LISTENING, INFERENCING_SPEECH
 
 from hardware.pi_operations import *
 
@@ -50,6 +50,7 @@ class TalkController:
 
         logger.debug(self.bot_response)
 
+        # todo: ensure this works properly, should be checking inputs for commands not bot responses
         self.command_checker()
 
     def command_checker(self):
