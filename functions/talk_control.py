@@ -53,10 +53,13 @@ class TalkController:
 
         self.inference_output = self.STT_handler.run_inference()
 
-        self.command_checker()
-
         logger.debug(self.inference_output)
 
+    def get_bot_engine_response(self):
+        """
+        This function returns the bot response.
+        :return:
+        """
         self.bot_response = (BotControl.input_get_response(self.inference_output))
 
         logger.debug(self.bot_response)
@@ -80,6 +83,8 @@ class TalkController:
             if event:
                 if split_event_details[0] == LISTEN_STT:
                     self.listen_stt()
+                    self.command_checker()
+                    self.get_bot_engine_response()
                 elif split_event_details[0] == SPEAK_TTS:
                     self.speak_tts(split_event_details[1])
             else:
