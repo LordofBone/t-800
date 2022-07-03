@@ -6,7 +6,7 @@ from events.event_queue import EventQueueAccess
 
 from Bot_Engine.functions.voice_controller import VoiceControllerAccess
 
-from events.event_types import LISTEN_STT, TALK_SYSTEMS, SPEAK_TTS, REPEAT_INPUT_TTS
+from events.event_types import LISTEN_STT, TALK_SYSTEMS, SPEAK_TTS, REPEAT_INPUT_TTS, REPEAT_LAST
 
 from hardware.pi_operations import *
 
@@ -71,8 +71,10 @@ class TalkController:
         """
         if self.inference_output == "command shut down":
             EventQueueAccess().add_event(HARDWARE_PI, SHUTDOWN, 5)
-        if self.inference_output == "command repeat":
+        elif self.inference_output == "command recite":
             EventQueueAccess().add_event(TALK_SYSTEMS, REPEAT_INPUT_TTS, 3)
+        elif self.inference_output == "command repeat":
+            EventQueueAccess().add_event(TALK_SYSTEMS, REPEAT_LAST, 3)
 
     def queue_checker(self):
         """
@@ -90,6 +92,8 @@ class TalkController:
                 elif split_event_details[0] == REPEAT_INPUT_TTS:
                     self.listen_stt()
                     self.bot_response = self.inference_output
+                    self.speak_tts()
+                elif split_event_details[0] == REPEAT_LAST:
                     self.speak_tts()
             else:
                 sleep(1)
