@@ -6,7 +6,7 @@ from events.event_queue import EventQueueAccess
 
 from Bot_Engine.functions.voice_controller import VoiceControllerAccess
 
-from events.event_types import LISTEN_STT, TALK_SYSTEMS, SPEAK_TTS
+from events.event_types import LISTEN_STT, TALK_SYSTEMS, SPEAK_TTS, REPEAT_INPUT_TTS
 
 from hardware.pi_operations import *
 
@@ -69,8 +69,10 @@ class TalkController:
         This function checks if the bot response is a command.
         :return:
         """
-        if self.inference_output == "shut down":
-            EventQueueAccess().add_event(SHUTDOWN)
+        if self.inference_output == "command shut down":
+            EventQueueAccess().add_event(HARDWARE_PI, SHUTDOWN, 5)
+        if self.inference_output == "command repeat":
+            EventQueueAccess().add_event(TALK_SYSTEMS, REPEAT_INPUT_TTS, 3)
 
     def queue_checker(self):
         """
@@ -85,8 +87,9 @@ class TalkController:
                     self.listen_stt()
                     self.command_checker()
                     self.get_bot_engine_response()
-                elif split_event_details[0] == SPEAK_TTS:
-                    self.speak_tts(split_event_details[1])
+                elif split_event_details[0] == REPEAT_INPUT_TTS:
+                    self.listen_stt()
+                    self.speak_tts(self.inference_output)
             else:
                 sleep(1)
 
