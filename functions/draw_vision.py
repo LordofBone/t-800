@@ -10,8 +10,11 @@ import numpy as np
 
 from hardware.serial_interfacing import SerialAccess
 
+from functions.talk_control import TalkControllerAccess
+
 from events.event_queue import DrawListQueueAccess
-from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE, LISTENING, STOPPED_LISTENING, INFERENCING_SPEECH, STOPPED_INFERENCING_SPEECH
+from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE, \
+    LISTENING, INFERENCING_SPEECH
 
 from config.vision_config import *
 
@@ -50,17 +53,17 @@ class HKVision:
     y_offset: int = .15
     text_list_event: list = field(default_factory=list)
     text_list_serial: list = field(default_factory=list)
+    text_list_current_process: list = field(default_factory=list)
     text_list_params_primary: list = field(default_factory=dict)
     text_list_params_secondary: list = field(default_factory=dict)
     text_list_params_tertiary: list = field(default_factory=dict)
     frame_rate_calc: float = 1
     text_max_events: int = 24
     text_max_serial: int = 8
+    text_max_current_process: int = 3
     overlay_time: int = 5
     overlay_count: int = 0
     show_smaller_img: bool = False
-    centre_text: bool = False
-    centre_text_content = str
     smaller_image_scale: int = 4
     ANY_NO_SERIAL_DRAW = ANY
     ANY_NO_SERIAL_DRAW.remove(SERIAL_DRAW)
@@ -130,12 +133,20 @@ class HKVision:
         This is where the latest serial data from the serial interface is added in to be drawn
         :return:
         """
-        pass
         event = DrawListQueueAccess.get_latest_event([SERIAL_DRAW])
         if event:
             self.text_list_serial.insert(0, event[2])
             if len(self.text_list_serial) == self.text_max_serial:
                 self.text_list_serial.pop(self.text_max_serial - 1)
+
+    def add_text_list_current_process(self, current_process):
+        """
+        This is where the latest serial data from the serial interface is added in to be drawn
+        :return:
+        """
+        self.text_list_current_process.insert(0, current_process)
+        if len(self.text_list_current_process) == self.text_max_current_process:
+            self.text_list_current_process.pop(self.text_max_serial - 1)
 
     def picture_in_picture(self):
         """
@@ -182,7 +193,7 @@ class HKVision:
                          self.cv2.LINE_AA)
 
     def draw_text_resized(self, font_size, text_d="no_fps_data", text_x=15, text_y=30, text_r=255, text_g=255,
-                  text_b=255):
+                          text_b=255):
         """
         This is where the text is drawn onto a cropped frame
         :param self:
@@ -199,9 +210,10 @@ class HKVision:
                          self.font_thickness,
                          self.cv2.LINE_AA)
 
-    def draw_list(self, in_list, x_start=30, y_start=65):
+    def draw_list(self, in_list, x_start=30, y_start=65, y_move=25):
         """
         This is where the list of events/serial data is drawn onto the frame
+        :param y_move:
         :param in_list:
         :param x_start:
         :param y_start:
@@ -209,7 +221,7 @@ class HKVision:
         """
         for i in range(0, self.text_max_events, 1):
             self.draw_text(self.font_size, get_list_item(i, in_list), x_start, y_start)
-            y_start += 25
+            y_start += y_move
 
     def draw_vision(self):
         """
@@ -228,32 +240,21 @@ class HKVision:
             elif split_event_details[0] == TERTIARY:
                 self.overlay_frame(IDENT_POSITIVE, split_event_details[1], split_event_details[2], 20)
 
-            if split_event_details[0] == LISTENING:
-                self.centre_text_content = "LISTENING"
-                if not self.centre_text:
-                    self.centre_text = True
-            elif split_event_details[0] == STOPPED_LISTENING:
-                self.centre_text_content = ""
-                if self.centre_text:
-                    self.centre_text = False
+        if TalkControllerAccess.STT_handler.listening:
+            self.add_text_list_current_process(LISTENING)
+        else:
+            self.text_list_current_process.remove(LISTENING)
 
-            if split_event_details[0] == INFERENCING_SPEECH:
-                self.centre_text_content = "INFERENCING SPEECH"
-                if not self.centre_text:
-                    self.centre_text = True
-            elif split_event_details[0] == STOPPED_INFERENCING_SPEECH:
-                self.centre_text_content = ""
-                if self.centre_text:
-                    self.centre_text = False
+        if TalkControllerAccess.STT_handler.inferencing:
+            self.add_text_list_current_process(INFERENCING_SPEECH)
+        else:
+            self.text_list_current_process.remove(INFERENCING_SPEECH)
 
         # Get latest events
         self.add_text_list_event()
 
         # Get latest serial outputs
         self.add_text_list_serial()
-
-        if self.centre_text:
-            self.draw_text(self.font_size, self.centre_text_content, int(self.frame_x / 2 - 50), int(self.frame_y / 2 - 50))
 
         # Display a picture of the acquired target within the main vision
         if self.show_smaller_img:
@@ -281,7 +282,7 @@ class HKVision:
         # If serial access is on (Arduino plugged-in and ON) then draw latest serial outputs
         # If serial is OFF then display this
         if SerialAccess.serial_on:
-            self.draw_text( self.font_size, "SERIAL_READS:",
+            self.draw_text(self.font_size, "SERIAL_READS:",
                            self.frame_x - int(self.frame_x * .22))
         else:
             self.draw_text(self.font_size, "NO_SERIAL_DEVICE",
@@ -292,6 +293,8 @@ class HKVision:
 
         # Draw serial outputs to screen
         self.draw_list(self.text_list_serial, self.frame_x - int(self.frame_x * .20))
+
+        self.draw_list(self.text_list_current_process, int(self.frame_x / 2 - 50), int(self.frame_y / 2 - 50), 30)
 
         # Draw mission parameters
         self.draw_text(self.font_size, "MISSION_PARAMS:", self.frame_x - int(self.frame_x * .22),

@@ -40,17 +40,9 @@ class TalkController:
         This is the main function that runs the STT and bot interaction.
         :return:
         """
-        DrawListQueueAccess.queue_addition(OVERLAY_DRAW, LISTENING, 1)
-
         self.STT_handler.initiate_recording()
 
-        DrawListQueueAccess.queue_addition(OVERLAY_DRAW, STOPPED_LISTENING, 1)
-
-        DrawListQueueAccess.queue_addition(OVERLAY_DRAW, INFERENCING_SPEECH, 1)
-
         self.inference_output = self.STT_handler.run_inference()
-
-        DrawListQueueAccess.queue_addition(OVERLAY_DRAW, STOPPED_INFERENCING_SPEECH, 1)
 
         logger.debug(self.inference_output)
 
