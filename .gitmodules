@@ -1,9 +1,6 @@
 [submodule "Bot_Engine"]
 	path = Bot_Engine
 	url = https://github.com/LordofBone/Bot_Engine
-[submodule "models/models"]
-	path = models/models
-	url = https://github.com/tensorflow/models
 [submodule "soran"]
 	path = soran
 	url = https://github.com/LordofBone/soran
