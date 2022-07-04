@@ -12,10 +12,12 @@ import sys
 bot_engine_dir = os.path.join(os.path.dirname(__file__), 'Bot_Engine')
 chatbot_dir = os.path.join(os.path.dirname(__file__), bot_engine_dir, 'Chatbot_8')
 soran_dir = os.path.join(os.path.dirname(__file__), 'soran')
+models_dir = os.path.join(os.path.dirname(__file__), 'models', 'models', 'research', 'object_detection')
 
 sys.path.append(bot_engine_dir)
 sys.path.append(chatbot_dir)
 sys.path.append(soran_dir)
+sys.path.append(models_dir)
 
 from functions.mission_processor_systems import MissionProcessorAccess
 import ml.ml_systems
