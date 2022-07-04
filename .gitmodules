@@ -1,6 +1,3 @@
-[submodule "soran"]
-	path = soran
-	url = https://github.com/LordofBone/soran.git
 [submodule "models/models"]
 	path = models/models
 	url = https://github.com/tensorflow/models
