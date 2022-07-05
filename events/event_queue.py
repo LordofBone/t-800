@@ -34,8 +34,6 @@ class EventQueue:
         """
         Initialise the event queue
         """
-        self.event_out = ["null_event", "should never see this"]
-
         self.priority_queue = PriorityQueue(
             maxsize=0)  # we initialise the PQ class instead of using a function to operate upon a list.
 
@@ -55,15 +53,28 @@ class EventQueue:
         the higher the priority)
         :return:
         """
-        self.event_out = self.priority_queue.get()
         try:
-            if self.event_out[1] in event_match:
-                return self.event_out
+            if self.priority_queue.queue[0][1] in event_match:
+                return self.priority_queue.get()
             else:
-                self.priority_queue.put(self.event_out)
                 return None
-        except TypeError:
+        except IndexError:
             return None
+
+    def all_event_tester(self):
+        """
+        This is a test function to test the event queue
+        :return:
+        """
+        while True:
+            event = self.priority_queue.get(timeout=5)
+            if event:
+                print(f"Detected {event[2]}")
+                self.priority_queue.task_done()
+            elif event is None:
+                break
+
+            sleep(1)
 
     def event_tester_1(self):
         """
@@ -76,6 +87,7 @@ class EventQueue:
             if event:
                 if event[2] == "BASIC TEST 2":
                     print(f"Detected {event[2]} with event type {test_event_1}")
+                    self.priority_queue.task_done()
 
             sleep(1)
 
@@ -86,10 +98,11 @@ class EventQueue:
         """
         test_event_2 = "EVENT_TYPE_2"
         while True:
-            event = self.get_latest_event(test_event_2)
+            event = self.get_latest_event([test_event_2])
             if event:
-                if event[2] == "BASIC TEST 1":
+                if event[2] == "BASIC TEST 5":
                     print(f"Detected {event[2]} with event type {test_event_2}")
+                    self.priority_queue.task_done()
 
             sleep(1)
 
@@ -114,8 +127,10 @@ if __name__ == "__main__":
     EventQueueAccess.queue_addition("EVENT_TYPE_2", "BASIC TEST 7", 3)
     EventQueueAccess.queue_addition("EVENT_TYPE_2", "BASIC TEST 8", 1)
 
-    threading.Thread(target=EventQueueAccess.event_tester_1, daemon=False).start()
-    threading.Thread(target=EventQueueAccess.event_tester_2, daemon=False).start()
+    # threading.Thread(target=EventQueueAccess.event_tester_1, daemon=False).start()
+    # threading.Thread(target=EventQueueAccess.event_tester_2, daemon=False).start()
+
+    threading.Thread(target=EventQueueAccess.all_event_tester(), daemon=False).start()
 
     # Freeze the queue to prevent the program from exiting out before all events are processed - this isn't required
     # when the main program is running
