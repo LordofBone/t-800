@@ -4,7 +4,7 @@
 # events; the HK project has been designed with threading in mind. Prior projects have been 1 action at a time,
 # this project will be able to do multiple things at once, such as detect a face and perform actions as well as
 # process movements - this is where the event queue comes in, instead of just doing direct calls to modules to
-# perform actions anything that needs doing will be passed into this queue and processed one at a time (highest
+# perform actions anything that needs doing will be passed into this queue and processed one at a time (the highest
 # priority first, lower the number the higher the priority). Multiple threaded modules running all at once will have
 # access to this queue and so will be able to pass their results and requests into it
 
