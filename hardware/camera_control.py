@@ -9,6 +9,7 @@ import logging
 logger = logging.getLogger("camera-hardware")
 
 
+# todo: get frame truncation working: frame rawCapture.truncate(0) or picamera2 equivalent
 class CameraControl:
     def __init__(self):
         """
