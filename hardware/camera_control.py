@@ -54,6 +54,10 @@ class CameraControl:
             self.camera.stop_preview()
 
     def capture_array(self):
+        """
+        Capture an array of images
+        :return:
+        """
         return self.camera.capture_array("main")
 
 
