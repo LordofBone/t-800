@@ -10,6 +10,14 @@ from subprocess import call
 
 import logging
 
+import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setwarnings(False)
+ledPin = 8
+GPIO.setup(ledPin, GPIO.OUT)
+
 logger = logging.getLogger("pi-operations")
 
 
@@ -40,9 +48,8 @@ class PiOperations:
         :return:
         """
         logger.debug("Turning LED on")
-        call('echo "79" > /sys/class/gpio/export', shell=True)
-        call('echo "out" > /sys/class/gpio/gpio79/direction', shell=True)
-        call('echo "1" > /sys/class/gpio/gpio79/value', shell=True)
+        logger.debug("Eye LED turning on")
+        GPIO.output(ledPin, GPIO.HIGH)
 
     def led_off(self):
         """
@@ -50,9 +57,8 @@ class PiOperations:
         :return:
         """
         logger.debug("Turning LED off")
-        call('echo "79" > /sys/class/gpio/export', shell=True)
-        call('echo "out" > /sys/class/gpio/gpio79/direction', shell=True)
-        call('echo "0" > /sys/class/gpio/gpio79/value', shell=True)
+        logger.debug("Eye LED turning off")
+        GPIO.output(ledPin, GPIO.LOW)
 
     def led_flash(self, times_to_flash):
         """
@@ -62,10 +68,11 @@ class PiOperations:
         """
         logger.debug("Flashing LED")
         for i in range(times_to_flash):
-            call('echo "0" > /sys/class/gpio/gpio79/value', shell=True)
-            sleep(0.1)
-            call('echo "1" > /sys/class/gpio/gpio79/value', shell=True)
-            sleep(0.1)
+            self.led_on()
+            time.sleep(0.5)
+            logger.debug("Eye LED turning off")
+            self.led_off()
+            time.sleep(0.5)
 
     def queue_checker(self):
         """
