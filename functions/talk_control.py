@@ -83,8 +83,9 @@ class TalkController:
         """
         while True:
             event = EventQueueAccess.get_latest_event([TALK_SYSTEMS])
-            split_event_details = event[2].split("|")
+
             if event:
+                split_event_details = event[2].split("|")
                 if split_event_details[0] == LISTEN_STT:
                     self.listen_stt()
                     self.command_checker()

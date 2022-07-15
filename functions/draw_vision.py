@@ -2,7 +2,7 @@
 
 # This module is for drawing text and other details onto a frame passed into it and then displaying it to the user if
 # vision is enabled
-
+import logging
 from dataclasses import dataclass, field
 
 import cv2
@@ -18,6 +18,7 @@ from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, S
 
 from config.vision_config import *
 
+logger = logging.getLogger("vision-control")
 
 def get_list_item(ind, list_in):
     """
@@ -243,12 +244,18 @@ class HKVision:
         if TalkControllerAccess.STT_handler.listening:
             self.add_text_list_current_process(LISTENING)
         else:
-            self.text_list_current_process.remove(LISTENING)
+            try:
+                self.text_list_current_process.remove(LISTENING)
+            except ValueError:
+                logger.debug("No listening event found")
 
         if TalkControllerAccess.STT_handler.inferencing:
             self.add_text_list_current_process(INFERENCING_SPEECH)
         else:
-            self.text_list_current_process.remove(INFERENCING_SPEECH)
+            try:
+                self.text_list_current_process.remove(INFERENCING_SPEECH)
+            except ValueError:
+                logger.debug("No inferencing event found")
 
         # Get latest events
         self.add_text_list_event()
