@@ -19,7 +19,7 @@ class CameraControl:
 
         self.camera = Picamera2()
 
-        preview_config = self.camera.preview_configuration(main={"size": self.camera_resolution})
+        preview_config = self.camera.create_preview_configuration(main={"size": self.camera_resolution})
 
         self.camera.configure(preview_config)
 
