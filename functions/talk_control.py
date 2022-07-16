@@ -50,15 +50,15 @@ class TalkController:
         :return:
         """
         # todo: use TalkControllerAccess.STT_handler.listening
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, LISTENING, 3)
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, LISTENING, 2)
 
         self.STT_handler.initiate_recording()
 
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, INFERENCING_SPEECH, 3)
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, INFERENCING_SPEECH, 2)
 
         self.inference_output = self.STT_handler.run_inference()
 
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, "", 3)
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, "", 2)
 
         logger.debug(self.inference_output)
 
@@ -67,11 +67,11 @@ class TalkController:
         This function returns the bot response.
         :return:
         """
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, PROCESSING_RESPONSES, 3)
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, PROCESSING_RESPONSES, 2)
 
         self.bot_response = (BotControl.input_get_response(self.inference_output))
 
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, str(self.bot_response), 3)
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, str(self.bot_response), 2)
 
         logger.debug(self.bot_response)
 
