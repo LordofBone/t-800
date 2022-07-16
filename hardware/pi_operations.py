@@ -5,13 +5,7 @@ from subprocess import call
 
 import logging
 
-import RPi.GPIO as GPIO
 from time import sleep
-
-GPIO.setmode(GPIO.BOARD)
-GPIO.setwarnings(False)
-ledPin = 8
-GPIO.setup(ledPin, GPIO.OUT)
 
 logger = logging.getLogger("pi-operations")
 
