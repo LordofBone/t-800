@@ -73,6 +73,12 @@ class ObjectDetector(object):
     skip_labels: bool = False
     skip_track_ids: bool = False
 
+    human_detection_backoff: int = 5
+    object_detection_backoff: int = 5
+
+    previous_human_detect_time = time.time() - human_detection_backoff
+    previous_object_detect_time = time.time() - object_detection_backoff
+
     def __post_init__(self):
         """
         This is the post init function for the object detector, it will set up the required models and settings etc.
@@ -194,9 +200,13 @@ class ObjectDetector(object):
                         VisionAccess.add_sub_image(crop_img, right, bottom)
 
                         if name_split == "person":
-                            queue_adder(HUMAN, display_str_out, 4)
+                            if time.time() > self.previous_human_detect_time + self.human_detection_backoff:
+                                queue_adder(HUMAN, display_str_out, 4)
+                                self.previous_human_detect_time = time.time()
                         else:
-                            queue_adder(OBJECT, display_str_out, 5)
+                            if time.time() > self.previous_object_detect_time + self.object_detection_backoff:
+                                queue_adder(OBJECT, display_str_out, 5)
+                                self.previous_object_detect_time = time.time()
                         # Delete the cropped image to save memory
                         del crop_img
 
