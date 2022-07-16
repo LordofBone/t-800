@@ -8,7 +8,8 @@ from time import sleep
 from functions.draw_vision import VisionAccess
 from events.event_queue import EventQueueAccess, DrawListQueueAccess, queue_adder
 from events.event_types import ANY, LISTEN_STT, TERMINATE, PATROL, TALK_SYSTEMS, ACTION_EXECUTE, ACTION_MOVEMENT, \
-    PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD, TALK, HUMAN, PRIMARY, SECONDARY, TERTIARY, OVERLAY_DRAW, STAND_ORD
+    PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD, TALK, HUMAN, PRIMARY, SECONDARY, TERTIARY, OVERLAY_DRAW, \
+    STAND_ORD
 from utils.yaml_importer import YAMLAccess, dict_search
 
 import logging
@@ -43,50 +44,44 @@ class MissionProcessor:
         return mission_confirms, mission_objectives
 
     # todo: add a switcher in here so that within the YAML purple or red plasma can be selected
-    def get_params(self, test_mode=False):
+    def get_params(self):
         """
         This function gets the latest mission parameters from the YAML file and returns them as a dictionary
-        :param test_mode:
         :return:
         """
-        while True:
-            # Add the mission parameters to be displayed
-            VisionAccess.add_mission_params(YAMLAccess.primary, YAMLAccess.secondary,
-                                            YAMLAccess.tertiary)
+        # while True:
+        # Add the mission parameters to be displayed
+        VisionAccess.add_mission_params(YAMLAccess.primary, YAMLAccess.secondary,
+                                        YAMLAccess.tertiary)
 
-            self.primary_objectives = YAMLAccess.primary
-            self.secondary_objectives = YAMLAccess.secondary
-            self.tertiary_objectives = YAMLAccess.tertiary
+        self.primary_objectives = YAMLAccess.primary
+        self.secondary_objectives = YAMLAccess.secondary
+        self.tertiary_objectives = YAMLAccess.tertiary
 
-            # Print them for debug/testing
-            logger.debug(VisionAccess.text_list_params_primary)
+        # Print them for debug/testing
+        logger.debug(VisionAccess.text_list_params_primary)
 
-            logger.debug(VisionAccess.text_list_params_secondary)
+        logger.debug(VisionAccess.text_list_params_secondary)
 
-            logger.debug(VisionAccess.text_list_params_tertiary)
+        logger.debug(VisionAccess.text_list_params_tertiary)
 
-            # Run a check for standing orders
-            (primary_found, secondary_found, tertiary_found), (objective_p, objective_s, objective_t) = \
-                self.mission_check(STAND_ORD)
+        # Run a check for standing orders
+        (primary_found, secondary_found, tertiary_found), (objective_p, objective_s, objective_t) = \
+            self.mission_check(STAND_ORD)
 
-            # If standing orders are detected push them into the event queue with the appropriate priority
-            if primary_found:
-                logger.debug(f'Standing Order: "{objective_p}" found')
-                EventQueueAccess.queue_addition(PRI_MSN_STAND_ORD, objective_p, 1)
-            if secondary_found:
-                logger.debug(f'Standing Order: "{objective_s}" found')
-                EventQueueAccess.queue_addition(SEC_MSN_STAND_ORD, objective_s, 2)
-            if tertiary_found:
-                logger.debug(f'Standing Order: "{objective_t}" found')
-                EventQueueAccess.queue_addition(TER_MSN_STAND_ORD, objective_t, 3)
-            # If test mode is activated then break the loop
-            if test_mode:
-                break
+        # If standing orders are detected push them into the event queue with the appropriate priority
+        if primary_found:
+            logger.debug(f'Standing Order: "{objective_p}" found')
+            EventQueueAccess.queue_addition(PRI_MSN_STAND_ORD, objective_p, 1)
+        if secondary_found:
+            logger.debug(f'Standing Order: "{objective_s}" found')
+            EventQueueAccess.queue_addition(SEC_MSN_STAND_ORD, objective_s, 2)
+        if tertiary_found:
+            logger.debug(f'Standing Order: "{objective_t}" found')
+            EventQueueAccess.queue_addition(TER_MSN_STAND_ORD, objective_t, 3)
 
-            # Sleep for period of time as defined in mission_parameters.yaml
-            sleep(YAMLAccess.PARAM_REFRESH)
-            # Refresh the yaml parameters to get new missions/objectives
-            YAMLAccess.refresh_params()
+        # Refresh the yaml parameters to get new missions/objectives
+        YAMLAccess.refresh_params()
 
     def objective_processor(self):
         """
@@ -94,7 +89,9 @@ class MissionProcessor:
         :return:
         """
         while True:
-            event = EventQueueAccess.get_latest_event(HUMAN)
+            self.get_params()
+
+            event = EventQueueAccess.get_latest_event([HUMAN])
 
             if not event:
                 continue
@@ -120,5 +117,5 @@ MissionProcessorAccess = MissionProcessor()
 
 if __name__ == "__main__":
     # Perform a test on getting the mission parameters from the mission_parameters.yaml and display them
-    MissionProcessorAccess.get_params(test_mode=True)
-    MissionProcessorAccess.objective_processor(test_mode=True)
+    MissionProcessorAccess.get_params()
+    MissionProcessorAccess.objective_processor()
