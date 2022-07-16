@@ -8,17 +8,16 @@ import logging
 import RPi.GPIO as GPIO
 import time
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setwarnings(False)
-ledPin = 8
-GPIO.setup(ledPin, GPIO.OUT)
-
 logger = logging.getLogger("led-controller")
 
 
 class LEDController:
     def __init__(self):
         self.led_flash_default = 3
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        self.ledPin = 14
+        GPIO.setup(self.ledPin, GPIO.OUT)
 
     def led_on(self):
         """
@@ -27,7 +26,7 @@ class LEDController:
         """
         logger.debug("Turning LED on")
         logger.debug("Eye LED turning on")
-        GPIO.output(ledPin, GPIO.HIGH)
+        GPIO.output(self.ledPin, GPIO.HIGH)
 
     def led_off(self):
         """
@@ -36,7 +35,7 @@ class LEDController:
         """
         logger.debug("Turning LED off")
         logger.debug("Eye LED turning off")
-        GPIO.output(ledPin, GPIO.LOW)
+        GPIO.output(self.ledPin, GPIO.LOW)
 
     def led_flash(self, times_to_flash):
         """
