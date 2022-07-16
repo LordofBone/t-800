@@ -59,7 +59,6 @@ class LEDController:
         while True:
             event = EventQueueAccess.get_latest_event([LED_ACCESS])
             if event:
-                print("LED EVENT: " + str(event))
                 if event[2] == LED_ON:
                     self.led_on()
                 elif event[2] == LED_OFF:
