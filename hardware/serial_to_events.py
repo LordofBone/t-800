@@ -8,6 +8,7 @@ from time import sleep
 from events.event_queue import DrawListQueueAccess, queue_adder
 from events.event_types import SERIAL_DRAW, SERIAL_WRITE, SERIAL_TEST, CHECK_DISTANCE
 from hardware.serial_interfacing import SerialAccess
+from config.serial_config import *
 
 import logging
 
@@ -27,6 +28,8 @@ def serial_getter():
 
             # Sent the serial outputs into the event factory's serial receiver list for processing
             DrawListQueueAccess.queue_addition(event_type=SERIAL_DRAW, event_content=serial_in, priority=3)
+
+            sleep(serial_reconnect)
 
             # This is where the outputs are processed for commands to be sent to the event queue
             # todo: add in more
