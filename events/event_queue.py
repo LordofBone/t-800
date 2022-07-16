@@ -53,12 +53,14 @@ class EventQueue:
         the higher the priority)
         :return:
         """
+        event_out = self.priority_queue.get()
         try:
-            if self.priority_queue.queue[0][1] in event_match:
-                return self.priority_queue.get()
+            if event_out[1] in event_match:
+                return event_out
             else:
+                self.priority_queue.put(event_out)
                 return None
-        except IndexError:
+        except TypeError:
             return None
 
     def all_event_tester(self):
