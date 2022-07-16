@@ -20,7 +20,7 @@ sys.path.append(soran_dir)
 
 from functions.mission_processor_systems import MissionProcessorAccess
 import ml.ml_systems
-from events.event_queue import EventQueueAccess
+from events.event_queue import queue_adder
 from events.event_types import LED_ACCESS, LED_ON
 from hardware.serial_interfacing import SerialAccess
 from hardware.serial_to_events import serial_getter
@@ -62,7 +62,6 @@ def start_systems():
 
     # Start the mission parameteriser parameter getter as a thread
     threading.Thread(target=MissionProcessorAccess.objective_processor, daemon=False).start()
-    threading.Thread(target=MissionProcessorAccess.get_params, daemon=False).start()
 
     logger.info("Started Mission Processor")
 
@@ -87,13 +86,6 @@ def start_systems():
 
     sleep(2)
 
-    # Start the mission parameteriser objective processor as a thread
-    # threading.Thread(target=functions.mission_parameteriser.objective_processor, daemon=False).start()
-
-    # logger.info("Started Mission Parameteriser Objective Processor")
-
-    sleep(2)
-
     # Start talk control as a thread
     threading.Thread(target=TalkControllerAccess.queue_checker, daemon=False).start()
 
@@ -105,7 +97,7 @@ def start_systems():
     logger.info("Started Machine Vision")
 
     # turn on the LED eye
-    EventQueueAccess.queue_addition(LED_ACCESS, LED_ON, 1)
+    queue_adder(LED_ACCESS, LED_ON, 1)
 
 
 if __name__ == "__main__":
