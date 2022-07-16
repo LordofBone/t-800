@@ -61,7 +61,7 @@ class HKVision:
     frame_rate_calc: float = 1
     text_max_events: int = 24
     text_max_serial: int = 8
-    text_max_current_process: int = 3
+    text_max_current_process: int = 1
     overlay_time: int = 5
     overlay_count: int = 0
     show_smaller_img: bool = False
@@ -69,6 +69,7 @@ class HKVision:
     ANY_NO_SERIAL_DRAW = ANY
     ANY_NO_SERIAL_DRAW.remove(SERIAL_DRAW)
     ANY_NO_SERIAL_DRAW.remove(OVERLAY_DRAW)
+    ANY_NO_SERIAL_DRAW.remove(CURRENT_PROCESS)
 
     def add_frame(self, frame, frame_rate_calc):
         """
