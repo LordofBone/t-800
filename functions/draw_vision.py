@@ -20,6 +20,7 @@ from config.vision_config import *
 
 logger = logging.getLogger("vision-control")
 
+
 def get_list_item(ind, list_in):
     """
     Get an item from a list/dictionary and catch index/key errors if there is no such item
@@ -247,7 +248,7 @@ class HKVision:
             try:
                 self.text_list_current_process.remove(LISTENING)
             except ValueError:
-                logger.debug("No listening event found")
+                logger.debug("No listening text found")
 
         if TalkControllerAccess.STT_handler.inferencing:
             self.add_text_list_current_process(INFERENCING_SPEECH)
@@ -255,7 +256,7 @@ class HKVision:
             try:
                 self.text_list_current_process.remove(INFERENCING_SPEECH)
             except ValueError:
-                logger.debug("No inferencing event found")
+                logger.debug("No inferencing text found")
 
         # Get latest events
         self.add_text_list_event()
