@@ -25,7 +25,7 @@ from events.event_types import HUMAN, OBJECT
 from utils.yaml_importer import YAMLAccess
 from hardware.camera_control import CameraControlAccess
 
-# Import utilites
+# Import utilities from the tensorflow object detection module
 from models.models.research.object_detection.utils import label_map_util as label_map_util
 from models.models.research.object_detection.utils import visualization_utils as vis_util
 
