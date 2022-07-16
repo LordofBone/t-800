@@ -29,8 +29,6 @@ def serial_getter():
             # Sent the serial outputs into the event factory's serial receiver list for processing
             DrawListQueueAccess.queue_addition(event_type=SERIAL_DRAW, event_content=serial_in, priority=3)
 
-            sleep(serial_reconnect)
-
             # This is where the outputs are processed for commands to be sent to the event queue
             # todo: add in more
             #  actions here from Arduino outputs, such as movement locks while the Arduino is moving motors etc.
