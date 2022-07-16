@@ -71,7 +71,7 @@ class TalkController:
 
         self.bot_response = (BotControl.input_get_response(self.inference_output))
 
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, self.bot_response, 3)
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, str(self.bot_response), 3)
 
         logger.debug(self.bot_response)
 
