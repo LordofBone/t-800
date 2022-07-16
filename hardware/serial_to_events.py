@@ -23,7 +23,7 @@ def serial_getter():
     while True:
         serial_in = SerialAccess.get_serial_list()
         # If serial output is present then process it, otherwise skip
-        if not serial_in == "" or not serial_in == "NO_SERIAL":
+        if serial_in != "":
             logger.debug(serial_in)
 
             # Sent the serial outputs into the event factory's serial receiver list for processing
@@ -42,8 +42,8 @@ def serial_getter():
             #     EventQueueAccess.queue_addition("ACTION:MOVEMENT", "LOCK", 1)
             # if "stopping" in serial_in:
             #     EventQueueAccess.queue_addition("ACTION:MOVEMENT", "UNLOCK", 2)
-        else:
-            sleep(1)
+        # else:
+        #     sleep(1)
 
 
 if __name__ == "__main__":
