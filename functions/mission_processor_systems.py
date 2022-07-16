@@ -23,6 +23,8 @@ class MissionProcessor:
         self.secondary_objectives = ""
         self.tertiary_objectives = ""
 
+        self.set_standing_orders()
+
     def mission_check(self, input_check):
         """
         This function checks whether an input matches against missions set in the mission_parameters.yaml
@@ -43,13 +45,23 @@ class MissionProcessor:
         # in object detection these are used to draw the info onto the screen)
         return mission_confirms, mission_objectives
 
-    # todo: add a switcher in here so that within the YAML purple or red plasma can be selected
-    def get_params(self):
+    def standing_order_refresher(self):
+        """
+        This function refreshes the standing orders every so often
+        :return:
+        """
+        while True:
+            self.set_standing_orders()
+            sleep(YAMLAccess.PARAM_REFRESH)
+
+    def set_standing_orders(self):
         """
         This function gets the latest mission parameters from the YAML file and returns them as a dictionary
         :return:
         """
-        # while True:
+        # Refresh the yaml parameters to get new missions/objectives
+        YAMLAccess.refresh_params()
+
         # Add the mission parameters to be displayed
         VisionAccess.add_mission_params(YAMLAccess.primary, YAMLAccess.secondary,
                                         YAMLAccess.tertiary)
@@ -80,18 +92,14 @@ class MissionProcessor:
             logger.debug(f'Standing Order: "{objective_t}" found')
             EventQueueAccess.queue_addition(TER_MSN_STAND_ORD, objective_t, 3)
 
-        # Refresh the yaml parameters to get new missions/objectives
-        YAMLAccess.refresh_params()
-
     def objective_processor(self):
         """
         This function processes objectives from the event factory and pushes them into actions
         :return:
         """
         while True:
-            self.get_params()
-
-            event = EventQueueAccess.get_latest_event([HUMAN])
+            # Get the next event from the event queue
+            event = EventQueueAccess.get_latest_event([HUMAN, PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD])
 
             if not event:
                 continue
@@ -117,5 +125,5 @@ MissionProcessorAccess = MissionProcessor()
 
 if __name__ == "__main__":
     # Perform a test on getting the mission parameters from the mission_parameters.yaml and display them
-    MissionProcessorAccess.get_params()
+    MissionProcessorAccess.set_standing_orders()
     MissionProcessorAccess.objective_processor()

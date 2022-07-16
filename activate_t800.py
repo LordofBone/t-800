@@ -63,6 +63,8 @@ def start_systems():
     # Start the mission parameteriser parameter getter as a thread
     threading.Thread(target=MissionProcessorAccess.objective_processor, daemon=False).start()
 
+    threading.Thread(target=MissionProcessorAccess.standing_order_refresher, daemon=False).start()
+
     logger.info("Started Mission Processor")
 
     # Start the serial access reader as a thread
