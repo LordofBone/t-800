@@ -28,6 +28,7 @@ def queue_adder(event_type, event_content, priority):
     DrawListQueueAccess.queue_addition(event_type, event_content, priority)
 
 
+# todo: find out how task complete works within priority queue, if it is needed
 # todo: determine whether this needs to be a dataclass
 class EventQueue:
     def __init__(self):
@@ -53,6 +54,7 @@ class EventQueue:
         the higher the priority)
         :return:
         """
+        # todo: find out which way works best for this
         event_out = self.priority_queue.get()
         try:
             if event_out[1] in event_match:
@@ -62,6 +64,15 @@ class EventQueue:
                 return None
         except TypeError:
             return None
+
+        # try:
+        #     print(self.priority_queue.queue[0])
+        #     if self.priority_queue.queue[0][1] in event_match:
+        #         return self.priority_queue.get()
+        #     else:
+        #         return None
+        # except IndexError:
+        #     return None
 
     def all_event_tester(self):
         """
@@ -129,10 +140,10 @@ if __name__ == "__main__":
     EventQueueAccess.queue_addition("EVENT_TYPE_2", "BASIC TEST 7", 3)
     EventQueueAccess.queue_addition("EVENT_TYPE_2", "BASIC TEST 8", 1)
 
-    # threading.Thread(target=EventQueueAccess.event_tester_1, daemon=False).start()
-    # threading.Thread(target=EventQueueAccess.event_tester_2, daemon=False).start()
+    threading.Thread(target=EventQueueAccess.event_tester_1, daemon=False).start()
+    threading.Thread(target=EventQueueAccess.event_tester_2, daemon=False).start()
 
-    threading.Thread(target=EventQueueAccess.all_event_tester(), daemon=False).start()
+    # threading.Thread(target=EventQueueAccess.all_event_tester, daemon=False).start()
 
     # Freeze the queue to prevent the program from exiting out before all events are processed - this isn't required
     # when the main program is running
