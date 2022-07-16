@@ -13,8 +13,7 @@ from hardware.serial_interfacing import SerialAccess
 from functions.talk_control import TalkControllerAccess
 
 from events.event_queue import DrawListQueueAccess
-from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE, \
-    LISTENING, INFERENCING_SPEECH
+from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE, CURRENT_PROCESS
 
 from config.vision_config import *
 
@@ -141,14 +140,16 @@ class HKVision:
             if len(self.text_list_serial) == self.text_max_serial:
                 self.text_list_serial.pop(self.text_max_serial - 1)
 
-    def add_text_list_current_process(self, current_process):
+    def add_text_list_current_process(self):
         """
         This is where the latest current process from the serial interface is added in to be drawn
         :return:
         """
-        self.text_list_current_process.insert(0, current_process)
-        if len(self.text_list_current_process) == self.text_max_current_process:
-            self.text_list_current_process.pop(self.text_max_current_process - 1)
+        event = DrawListQueueAccess.get_latest_event([CURRENT_PROCESS])
+        if event:
+            self.text_list_current_process.insert(0, event[2])
+            if len(self.text_list_current_process) == self.text_max_current_process:
+                self.text_list_current_process.pop(self.text_max_current_process - 1)
 
     def picture_in_picture(self):
         """
@@ -242,26 +243,13 @@ class HKVision:
             elif split_event_details[0] == TERTIARY:
                 self.overlay_frame(IDENT_POSITIVE, split_event_details[1], split_event_details[2], 20)
 
-        if TalkControllerAccess.STT_handler.listening:
-            self.add_text_list_current_process(LISTENING)
-        else:
-            try:
-                self.text_list_current_process.remove(LISTENING)
-            except ValueError:
-                logger.debug("No listening text found")
-
-        if TalkControllerAccess.STT_handler.inferencing:
-            self.add_text_list_current_process(INFERENCING_SPEECH)
-        else:
-            try:
-                self.text_list_current_process.remove(INFERENCING_SPEECH)
-            except ValueError:
-                logger.debug("No inferencing text found")
-
         # Get latest events
         self.add_text_list_event()
         # Get latest serial outputs
         self.add_text_list_serial()
+
+        # Get latest current process
+        self.add_text_list_current_process()
 
         # Display a picture of the acquired target within the main vision
         if self.show_smaller_img:
@@ -271,6 +259,7 @@ class HKVision:
             else:
                 self.overlay_count = 0
                 self.show_smaller_img = False
+
         # Draw FPS
         self.draw_text(self.font_size, "FPS={0:.2f}".format(self.frame_rate_calc),
                        self.frame_x - int(self.frame_x * .98),

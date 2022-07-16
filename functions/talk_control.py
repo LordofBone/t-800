@@ -2,11 +2,11 @@ from soran.integrate_stt import SpeechtoTextHandler
 
 from Bot_Engine.functions import core_systems
 
-from events.event_queue import EventQueueAccess
-
+from events.event_queue import EventQueueAccess, DrawListQueueAccess
 from Bot_Engine.functions.voice_controller import VoiceControllerAccess
 
-from events.event_types import LISTEN_STT, TALK_SYSTEMS, SPEAK_TTS, REPEAT_INPUT_TTS, REPEAT_LAST
+from events.event_types import LISTEN_STT, TALK_SYSTEMS, SPEAK_TTS, REPEAT_INPUT_TTS, REPEAT_LAST, LISTENING, \
+    INFERENCING_SPEECH, CURRENT_PROCESS, PROCESSING_RESPONSES
 
 from hardware.pi_operations import *
 
@@ -49,9 +49,16 @@ class TalkController:
         This is the main function that runs the STT and bot interaction.
         :return:
         """
+        # todo: use TalkControllerAccess.STT_handler.listening
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, LISTENING, 3)
+
         self.STT_handler.initiate_recording()
 
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, INFERENCING_SPEECH, 3)
+
         self.inference_output = self.STT_handler.run_inference()
+
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, "", 3)
 
         logger.debug(self.inference_output)
 
@@ -60,7 +67,11 @@ class TalkController:
         This function returns the bot response.
         :return:
         """
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, PROCESSING_RESPONSES, 3)
+
         self.bot_response = (BotControl.input_get_response(self.inference_output))
+
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, self.bot_response, 3)
 
         logger.debug(self.bot_response)
 
