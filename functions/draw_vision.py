@@ -143,12 +143,12 @@ class HKVision:
 
     def add_text_list_current_process(self, current_process):
         """
-        This is where the latest serial data from the serial interface is added in to be drawn
+        This is where the latest current process from the serial interface is added in to be drawn
         :return:
         """
         self.text_list_current_process.insert(0, current_process)
         if len(self.text_list_current_process) == self.text_max_current_process:
-            self.text_list_current_process.pop(self.text_max_serial - 1)
+            self.text_list_current_process.pop(self.text_max_current_process - 1)
 
     def picture_in_picture(self):
         """
@@ -260,7 +260,6 @@ class HKVision:
 
         # Get latest events
         self.add_text_list_event()
-
         # Get latest serial outputs
         self.add_text_list_serial()
 
@@ -272,7 +271,6 @@ class HKVision:
             else:
                 self.overlay_count = 0
                 self.show_smaller_img = False
-
         # Draw FPS
         self.draw_text(self.font_size, "FPS={0:.2f}".format(self.frame_rate_calc),
                        self.frame_x - int(self.frame_x * .98),
@@ -298,7 +296,6 @@ class HKVision:
 
         # Draw events to screen
         self.draw_list(self.text_list_event, self.frame_x - int(self.frame_x * .95))
-
         # Draw serial outputs to screen
         self.draw_list(self.text_list_serial, self.frame_x - int(self.frame_x * .20))
 
@@ -307,7 +304,6 @@ class HKVision:
         # Draw mission parameters
         self.draw_text(self.font_size, "MISSION_PARAMS:", self.frame_x - int(self.frame_x * .22),
                        self.frame_y - int(self.frame_y * .47))
-
         self.draw_list(self.text_list_params_primary, self.frame_x - int(self.frame_x * .20),
                        self.frame_y - int(self.frame_y * .45))
 
