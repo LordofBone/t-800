@@ -80,7 +80,7 @@ class MissionProcessor:
         # Run a check for standing orders
         (primary_found, secondary_found, tertiary_found), (objective_p, objective_s, objective_t) = \
             self.mission_check(STAND_ORD)
-
+        # todo: figure out why everything is being pushed as primary
         # If standing orders are detected push them into the event queue with the appropriate priority
         if primary_found:
             logger.debug(f'Standing Order: "{objective_p}" found')
