@@ -21,12 +21,13 @@ sys.path.append(soran_dir)
 from functions.mission_processor_systems import MissionProcessorAccess
 import ml.ml_systems
 from events.event_queue import EventQueueAccess
-from events.event_types import SERIAL_WRITE, SERIAL_TEST
+from events.event_types import LED_ACCESS, LED_ON
 from hardware.serial_interfacing import SerialAccess
 from hardware.serial_to_events import serial_getter
 from functions.talk_control import TalkControllerAccess
 from hardware.pi_operations import PiOperationsAccess
 from hardware.inputs import InputSystemsAccess
+from hardware.led_controller import LEDControllerAccess
 
 import logging
 
@@ -53,6 +54,11 @@ def start_systems():
     threading.Thread(target=PiOperationsAccess.queue_checker, daemon=False).start()
 
     logger.info("Started Pi Operations")
+
+    # Start LED controller as a thread
+    threading.Thread(target=LEDControllerAccess.queue_checker, daemon=False).start()
+
+    logger.info("Started LED Controller")
 
     # Start the mission parameteriser parameter getter as a thread
     threading.Thread(target=MissionProcessorAccess.objective_processor, daemon=False).start()
@@ -98,11 +104,8 @@ def start_systems():
 
     logger.info("Started Machine Vision")
 
-    # serial write test
-    # todo: probably needs removing
-    # sleep(30)
-    #
-    # EventQueueAccess.queue_addition(SERIAL_WRITE, SERIAL_TEST, 1)
+    # turn on the LED eye
+    EventQueueAccess.queue_addition(LED_ACCESS, LED_ON, 1)
 
 
 if __name__ == "__main__":
