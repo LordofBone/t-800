@@ -9,7 +9,7 @@ from functions.draw_vision import VisionAccess
 from events.event_queue import EventQueueAccess, DrawListQueueAccess, queue_adder
 from events.event_types import ANY, LISTEN_STT, TERMINATE, PATROL, TALK_SYSTEMS, ACTION_EXECUTE, ACTION_MOVEMENT, \
     PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD, TALK, HUMAN, PRIMARY, SECONDARY, TERTIARY, OVERLAY_DRAW, \
-    STAND_ORD
+    STAND_ORD, OBJECT
 from utils.yaml_importer import YAMLAccess, dict_search
 
 import logging
@@ -97,9 +97,10 @@ class MissionProcessor:
         This function processes objectives from the event factory and pushes them into actions
         :return:
         """
+        # todo: move human detection to another specific function
         while True:
             # Get the next event from the event queue
-            event = EventQueueAccess.get_latest_event([HUMAN, PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD])
+            event = EventQueueAccess.get_latest_event([HUMAN, OBJECT, PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD])
 
             if not event:
                 continue
