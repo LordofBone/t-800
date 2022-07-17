@@ -13,7 +13,7 @@ from hardware.serial_interfacing import SerialAccess
 from functions.talk_control import TalkControllerAccess
 
 from events.event_queue import DrawListQueueAccess, CurrentProcessQueueAccess
-from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE, CURRENT_PROCESS
+from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE
 
 from config.vision_config import *
 
@@ -143,14 +143,15 @@ class HKVision:
 
     def add_text_list_current_process(self):
         """
-        This is where the latest current process from the serial interface is added in to be drawn
+        This is where the latest current process of the skull is added in to be drawn, these are events like
+        speech to text listening/inference etc.
         :return:
         """
-        event = CurrentProcessQueueAccess.get_latest_event([CURRENT_PROCESS])
+        event = CurrentProcessQueueAccess.get_latest_event(ANY)
         if event:
             self.text_list_current_process.insert(0, event[2])
-            # if len(self.text_list_current_process) > self.text_max_current_process:
-            #     self.text_list_current_process.pop(self.text_max_current_process - 1)
+            if len(self.text_list_current_process) > self.text_max_current_process:
+                self.text_list_current_process.pop(self.text_max_current_process - 1)
 
     def picture_in_picture(self):
         """

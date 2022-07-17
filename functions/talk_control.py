@@ -6,7 +6,7 @@ from events.event_queue import EventQueueAccess, CurrentProcessQueueAccess
 from Bot_Engine.functions.voice_controller import VoiceControllerAccess
 
 from events.event_types import LISTEN_STT, TALK_SYSTEMS, SPEAK_TTS, REPEAT_INPUT_TTS, REPEAT_LAST, LISTENING, \
-    INFERENCING_SPEECH, CURRENT_PROCESS, PROCESSING_RESPONSES, AUDIO_SYSTEM, ML_SYSTEM, RESPONSE_FOUND
+    INFERENCING_SPEECH, PROCESSING_RESPONSES, AUDIO_SYSTEM, ML_SYSTEM, RESPONSE_FOUND
 
 from hardware.pi_operations import *
 
