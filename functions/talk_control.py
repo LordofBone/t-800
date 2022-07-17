@@ -58,7 +58,7 @@ class TalkController:
 
         self.inference_output = self.STT_handler.run_inference()
 
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, "", 2)
+        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, f"Heard: {self.inference_output}", 2)
 
         logger.debug(self.inference_output)
 
