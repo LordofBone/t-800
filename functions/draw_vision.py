@@ -12,7 +12,7 @@ from hardware.serial_interfacing import SerialAccess
 
 from functions.talk_control import TalkControllerAccess
 
-from events.event_queue import DrawListQueueAccess
+from events.event_queue import DrawListQueueAccess, CurrentProcessQueueAccess
 from events.event_types import SERIAL_DRAW, OVERLAY_DRAW, ANY, HUMAN, PRIMARY, SECONDARY, TERTIARY, IDENT_POSITIVE, CURRENT_PROCESS
 
 from config.vision_config import *
@@ -61,7 +61,7 @@ class HKVision:
     frame_rate_calc: float = 1
     text_max_events: int = 24
     text_max_serial: int = 8
-    text_max_current_process: int = 1
+    text_max_current_process: int = 2
     overlay_time: int = 5
     overlay_count: int = 0
     show_smaller_img: bool = False
@@ -146,11 +146,11 @@ class HKVision:
         This is where the latest current process from the serial interface is added in to be drawn
         :return:
         """
-        event = DrawListQueueAccess.get_latest_event([CURRENT_PROCESS])
+        event = CurrentProcessQueueAccess.get_latest_event([CURRENT_PROCESS])
         if event:
             self.text_list_current_process.insert(0, event[2])
-            if len(self.text_list_current_process) == self.text_max_current_process:
-                self.text_list_current_process.pop(self.text_max_current_process - 1)
+            # if len(self.text_list_current_process) > self.text_max_current_process:
+            #     self.text_list_current_process.pop(self.text_max_current_process - 1)
 
     def picture_in_picture(self):
         """

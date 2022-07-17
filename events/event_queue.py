@@ -54,25 +54,14 @@ class EventQueue:
         the higher the priority)
         :return:
         """
-        # todo: find out which way works best for this
-        event_out = self.priority_queue.get()
         try:
-            if event_out[1] in event_match:
-                return event_out
+            print(self.priority_queue.queue[0])
+            if self.priority_queue.queue[0][1] in event_match:
+                return self.priority_queue.get()
             else:
-                self.priority_queue.put(event_out)
                 return None
-        except TypeError:
+        except IndexError:
             return None
-
-        # try:
-        #     print(self.priority_queue.queue[0])
-        #     if self.priority_queue.queue[0][1] in event_match:
-        #         return self.priority_queue.get()
-        #     else:
-        #         return None
-        # except IndexError:
-        #     return None
 
     def all_event_tester(self):
         """
@@ -125,6 +114,8 @@ class EventQueue:
 EventQueueAccess = EventQueue()
 
 DrawListQueueAccess = EventQueue()
+
+CurrentProcessQueueAccess = EventQueue()
 
 # when this module is called on its own run a quick test, check 'Testing' folder for more tests around this
 if __name__ == "__main__":
