@@ -2,11 +2,11 @@ from soran.integrate_stt import SpeechtoTextHandler
 
 from Bot_Engine.functions import core_systems
 
-from events.event_queue import EventQueueAccess, DrawListQueueAccess
+from events.event_queue import EventQueueAccess, CurrentProcessQueueAccess
 from Bot_Engine.functions.voice_controller import VoiceControllerAccess
 
 from events.event_types import LISTEN_STT, TALK_SYSTEMS, SPEAK_TTS, REPEAT_INPUT_TTS, REPEAT_LAST, LISTENING, \
-    INFERENCING_SPEECH, CURRENT_PROCESS, PROCESSING_RESPONSES
+    INFERENCING_SPEECH, CURRENT_PROCESS, PROCESSING_RESPONSES, AUDIO_SYSTEM, ML_SYSTEM, RESPONSE_FOUND
 
 from hardware.pi_operations import *
 
@@ -50,15 +50,15 @@ class TalkController:
         :return:
         """
         # todo: use TalkControllerAccess.STT_handler.listening
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, LISTENING, 2)
+        CurrentProcessQueueAccess.queue_addition(AUDIO_SYSTEM, LISTENING, 2)
 
         self.STT_handler.initiate_recording()
 
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, INFERENCING_SPEECH, 2)
+        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, INFERENCING_SPEECH, 2)
 
         self.inference_output = self.STT_handler.run_inference()
 
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, f"Heard: {self.inference_output}", 2)
+        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, f"Heard: {self.inference_output}", 2)
 
         logger.debug(self.inference_output)
 
@@ -67,11 +67,11 @@ class TalkController:
         This function returns the bot response.
         :return:
         """
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, PROCESSING_RESPONSES, 2)
+        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, PROCESSING_RESPONSES, 2)
 
         self.bot_response = (BotControl.input_get_response(self.inference_output))
 
-        DrawListQueueAccess.queue_addition(CURRENT_PROCESS, str(self.bot_response), 2)
+        CurrentProcessQueueAccess.queue_addition(RESPONSE_FOUND, f"REPLY: {self.bot_response}", 2)
 
         logger.debug(self.bot_response)
 
