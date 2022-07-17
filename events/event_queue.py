@@ -55,7 +55,6 @@ class EventQueue:
         :return:
         """
         try:
-            print(self.priority_queue.queue[0])
             if self.priority_queue.queue[0][1] in event_match:
                 return self.priority_queue.get()
             else:
