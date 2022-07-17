@@ -69,7 +69,6 @@ class HKVision:
     ANY_NO_SERIAL_DRAW = ANY
     ANY_NO_SERIAL_DRAW.remove(SERIAL_DRAW)
     ANY_NO_SERIAL_DRAW.remove(OVERLAY_DRAW)
-    ANY_NO_SERIAL_DRAW.remove(CURRENT_PROCESS)
 
     def add_frame(self, frame, frame_rate_calc):
         """
