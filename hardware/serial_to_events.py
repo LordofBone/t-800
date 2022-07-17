@@ -42,8 +42,6 @@ def serial_getter():
             #     EventQueueAccess.queue_addition("ACTION:MOVEMENT", "LOCK", 1)
             # if "stopping" in serial_in:
             #     EventQueueAccess.queue_addition("ACTION:MOVEMENT", "UNLOCK", 2)
-        # else:
-        #     sleep(1)
 
 
 if __name__ == "__main__":
