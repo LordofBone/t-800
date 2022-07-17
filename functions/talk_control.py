@@ -58,7 +58,7 @@ class TalkController:
 
         self.inference_output = self.STT_handler.run_inference()
 
-        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, f"Heard: {self.inference_output}", 1)
+        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, f"Heard: {self.inference_output[0]}", 1)
 
         logger.debug(self.inference_output)
 
