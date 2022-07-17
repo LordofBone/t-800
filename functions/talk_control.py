@@ -50,15 +50,15 @@ class TalkController:
         :return:
         """
         # todo: use TalkControllerAccess.STT_handler.listening
-        CurrentProcessQueueAccess.queue_addition(AUDIO_SYSTEM, LISTENING, 2)
+        CurrentProcessQueueAccess.queue_addition(AUDIO_SYSTEM, LISTENING, 1)
 
         self.STT_handler.initiate_recording()
 
-        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, INFERENCING_SPEECH, 2)
+        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, INFERENCING_SPEECH, 1)
 
         self.inference_output = self.STT_handler.run_inference()
 
-        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, f"Heard: {self.inference_output}", 2)
+        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, f"Heard: {self.inference_output}", 1)
 
         logger.debug(self.inference_output)
 
@@ -67,11 +67,11 @@ class TalkController:
         This function returns the bot response.
         :return:
         """
-        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, PROCESSING_RESPONSES, 2)
+        CurrentProcessQueueAccess.queue_addition(ML_SYSTEM, PROCESSING_RESPONSES, 1)
 
         self.bot_response = (BotControl.input_get_response(self.inference_output))
 
-        CurrentProcessQueueAccess.queue_addition(RESPONSE_FOUND, f"REPLY: {self.bot_response}", 2)
+        CurrentProcessQueueAccess.queue_addition(RESPONSE_FOUND, f"REPLY: {self.bot_response}", 1)
 
         logger.debug(self.bot_response)
 
