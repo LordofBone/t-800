@@ -3,6 +3,7 @@
 # This checks inputs against missions and gets objectives, refreshes mission parameters and gets standing orders and
 # processes objectives and passes them on to be actioned
 
+import time
 from time import sleep
 
 from functions.draw_vision import VisionAccess
@@ -22,6 +23,10 @@ class MissionProcessor:
         self.primary_objectives = ""
         self.secondary_objectives = ""
         self.tertiary_objectives = ""
+        # todo: add this to a config somewhere
+        self.duplicate_event_backoff = 10
+
+        self.duplicate_event_backoff_time = time.time() - self.duplicate_event_backoff
 
         self.set_standing_orders()
 
@@ -97,12 +102,18 @@ class MissionProcessor:
         This function processes objectives from the event factory and pushes them into actions
         :return:
         """
+        previous_event = ""
+
         # todo: move human detection to another specific function
         while True:
             # Get the next event from the event queue
-            event = EventQueueAccess.get_latest_event([HUMAN, OBJECT, PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD])
+            event = EventQueueAccess.get_latest_event(
+                [HUMAN, OBJECT, PRI_MSN_STAND_ORD, SEC_MSN_STAND_ORD, TER_MSN_STAND_ORD])
 
             if not event:
+                continue
+
+            if event[1] == previous_event and time.time() < self.duplicate_event_backoff_time + self.duplicate_event_backoff:
                 continue
 
             (primary_found, secondary_found, tertiary_found), (objective_p, objective_s, objective_t) = \
@@ -117,6 +128,8 @@ class MissionProcessor:
             elif tertiary_found:
                 queue_adder(objective_t[1], objective_t[2], 3)
                 DrawListQueueAccess.queue_addition(OVERLAY_DRAW, f"{TERTIARY}|{event[1]}|{tertiary_found[2]}", 3)
+
+            previous_event = event[1]
 
             # Wait for a period of time as defined in mission_parameters.yaml before processing next objective
             sleep(YAMLAccess.OBJ_PROCESS)
