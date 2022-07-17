@@ -61,7 +61,7 @@ class HKVision:
     frame_rate_calc: float = 1
     text_max_events: int = 24
     text_max_serial: int = 8
-    text_max_current_process: int = 2
+    text_max_current_process: int = 1
     overlay_time: int = 5
     overlay_count: int = 0
     show_smaller_img: bool = False
@@ -125,6 +125,7 @@ class HKVision:
         # todo: figure out why the event type is drawing to screen not the content of the event
         event = DrawListQueueAccess.get_latest_event(self.ANY_NO_SERIAL_DRAW)
         if event:
+            # todo: swap the list insert after the len check?
             self.text_list_event.insert(0, event[2])
             if len(self.text_list_event) == self.text_max_events:
                 self.text_list_event.pop(self.text_max_events - 1)
@@ -136,6 +137,7 @@ class HKVision:
         """
         event = DrawListQueueAccess.get_latest_event([SERIAL_DRAW])
         if event:
+            # todo: swap the list insert after the len check?
             self.text_list_serial.insert(0, event[2])
             if len(self.text_list_serial) == self.text_max_serial:
                 self.text_list_serial.pop(self.text_max_serial - 1)
@@ -148,9 +150,9 @@ class HKVision:
         """
         event = CurrentProcessQueueAccess.get_latest_event(ANY)
         if event:
-            self.text_list_current_process.insert(0, event[2])
-            if len(self.text_list_current_process) > self.text_max_current_process:
+            if len(self.text_list_current_process) == self.text_max_current_process:
                 self.text_list_current_process.pop(self.text_max_current_process - 1)
+            self.text_list_current_process.insert(0, event[2])
 
     def picture_in_picture(self):
         """
