@@ -14,4 +14,4 @@ This requires quite a bit of hardware and setup, that is covered at my Hackster 
 
 [Hackster](https://www.hackster.io/314reactor/terminator-skull-9bf229) 
 
-[Electromaker](https://www.electromaker.io/project/view/)
+[Electromaker](https://www.electromaker.io/project/view/terminator-skull)
