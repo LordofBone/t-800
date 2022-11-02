@@ -64,7 +64,7 @@ class EventQueue:
 
     def all_event_tester(self):
         """
-        This is a test.txt function to test the event queue
+        This is a test function to test the event queue
         :return:
         """
         while True:
@@ -79,7 +79,7 @@ class EventQueue:
 
     def event_tester_1(self):
         """
-        This is a test.txt function to test the event queue
+        This is a test function to test the event queue
         :return:
         """
         test_event_1 = "EVENT_TYPE_1"
@@ -94,7 +94,7 @@ class EventQueue:
 
     def event_tester_2(self):
         """
-        This is a test.txt function to test the event queue
+        This is a test function to test the event queue
         :return:
         """
         test_event_2 = "EVENT_TYPE_2"
@@ -116,7 +116,7 @@ DrawListQueueAccess = EventQueue()
 
 CurrentProcessQueueAccess = EventQueue()
 
-# when this module is called on its own run a quick test.txt, check 'Testing' folder for more tests around this
+# when this module is called on its own run a quick test, check 'Testing' folder for more tests around this
 if __name__ == "__main__":
     # start the thread for this instance
 
