@@ -138,6 +138,6 @@ class MissionProcessor:
 MissionProcessorAccess = MissionProcessor()
 
 if __name__ == "__main__":
-    # Perform a test on getting the mission parameters from the mission_parameters.yaml and display them
+    # Perform a test.txt on getting the mission parameters from the mission_parameters.yaml and display them
     MissionProcessorAccess.set_standing_orders()
     MissionProcessorAccess.objective_processor()
