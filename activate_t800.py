@@ -1,8 +1,3 @@
-# !/user/bin/env python3
-
-# Main module where all of the subsystems for the HK are called and activated, also allows for commandline arguments
-# for debugging, showing vision and storing detections to file
-
 import threading
 from time import sleep
 
