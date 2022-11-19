@@ -81,11 +81,11 @@ class TalkController:
         :return:
         """
         if self.inference_output == "command shut down":
-            EventQueueAccess().add_event(HARDWARE_PI, SHUTDOWN, 5)
+            EventQueueAccess.add_event(HARDWARE_PI, SHUTDOWN, 5)
         elif self.inference_output == "command recite":
-            EventQueueAccess().add_event(TALK_SYSTEMS, REPEAT_INPUT_TTS, 3)
+            EventQueueAccess.add_event(TALK_SYSTEMS, REPEAT_INPUT_TTS, 3)
         elif self.inference_output == "command repeat":
-            EventQueueAccess().add_event(TALK_SYSTEMS, REPEAT_LAST, 3)
+            EventQueueAccess.add_event(TALK_SYSTEMS, REPEAT_LAST, 3)
 
     def queue_checker(self):
         """
