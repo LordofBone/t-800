@@ -67,6 +67,8 @@ class MissionProcessor:
         # Refresh the yaml parameters to get new missions/objectives
         YAMLAccess.refresh_params()
 
+        # todo: make this an addition to the queue rather than a direct call, so this entire function can be run
+        #  standalone
         # Add the mission parameters to be displayed
         VisionAccess.add_mission_params(YAMLAccess.primary, YAMLAccess.secondary,
                                         YAMLAccess.tertiary)
